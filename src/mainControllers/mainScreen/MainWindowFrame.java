@@ -1,28 +1,28 @@
-package mainControllers;
+package mainControllers.mainScreen;
 
 import javax.swing.*;
 
-public class WindowFrame extends JFrame {
+public class MainWindowFrame extends JFrame {
     // private List<JPanel> panelBuffor;
-    private static WindowFrame instance;
+    private static MainWindowFrame instance;
 // Set a GridLayout with one row and one column to ensure 
 // that any added JPanel will always expand to fill the window, 
 // regardless of the JFrame's size or content changes.
 
     //Starting settings
-    private WindowFrame() {
+    private MainWindowFrame() {
         super("Chess");
-        setSize(800, 800);
+        setSize(1200, 1000);
         setLayout(new java.awt.GridLayout(1, 1));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
     }
     //Singleton
-    public static WindowFrame getInstance(){
+    public static MainWindowFrame getInstance(){
         if (instance == null) {
             // Tworzy instancję, jeśli taka jeszcze nie istnieje
-            instance = new WindowFrame();
+            instance = new MainWindowFrame();
         }
         return instance;
     }

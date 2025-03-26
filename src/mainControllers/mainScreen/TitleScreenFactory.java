@@ -3,8 +3,6 @@ package mainControllers.mainScreen;
 //import mainControllers.gameControlls.GameInstance;
 //import mainControllers.gameControlls.Player;
 
-import mainControllers.MainOperator;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

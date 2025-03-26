@@ -15,4 +15,7 @@ public class Player {
         gamesLost = 0;
         gamesDrawn = 0;
     }
+    public String getName(){
+        return playerName;
+    }
 }

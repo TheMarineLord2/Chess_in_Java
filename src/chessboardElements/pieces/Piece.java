@@ -1,8 +1,8 @@
 package chessboardElements.pieces;
 
-import chessboardElements.chessboard.TileColour;
+import chessboardElements.chessboard.TileColor;
 
 public abstract class Piece {
     ChessPiece visualRepresentation;
-    TileColour tileColour;
+    TileColor tileColor;
 }

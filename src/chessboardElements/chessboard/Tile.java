@@ -1,9 +1,9 @@
 package chessboardElements.chessboard;
 
-import chessboardElements.pieces.ChessPiece;
 import chessboardElements.pieces.Piece;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 // klasa tile przechowuje metody dostępne zawsze dla zwykłego pola oraz te służące do renderowania
@@ -15,8 +15,8 @@ public class Tile {
 
     // KONSTRUTORY
     private Tile() {}
-    public Tile(TileColour tileColour) {
-        createButton(tileColour);
+    public Tile(TileColor tileColor) {
+        createButton(tileColor);
     }
 
     // metody publiczne
@@ -24,13 +24,17 @@ public class Tile {
         fieldButton.setLocation(x,y);
     }*/
     public void setPiece(Piece piece){this.piece = piece;}
+    public Piece getPiece() {return piece;}
+    public Color getColor(){return fieldButton.getBackground();}
+    public void setButtonCoordinates(int x, int y){fieldButton.setLocation(x,y);}
+    public JButton getFieldButton() {return fieldButton;}
 
 
     // metody prywatne
-    private void createButton(TileColour tileColour) {
+    private void createButton(TileColor tileColor) {
         fieldButton = new JButton();
         fieldButton.setSize(size, size);
-        fieldButton.setBackground(tileColour.getColour());
+        fieldButton.setBackground(tileColor.getColor());
         fieldButton.setVisible(true);
     }
 }

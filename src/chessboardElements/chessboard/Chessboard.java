@@ -20,10 +20,10 @@ public class Chessboard {
             for (int j = 0; j < 8; j++) { // Columns
                 if ((i + j) % 2 == 0) {
                     // Even sum of indexes: BLACK
-                    playingField[i][j] = new Tile(TileColour.BLACK);
+                    playingField[i][j] = new Tile(TileColor.BLACK);
                 } else {
                     // Odd sum of indexes: WHITE
-                    playingField[i][j] = new Tile(TileColour.WHITE);
+                    playingField[i][j] = new Tile(TileColor.WHITE);
                 }
             }
         }

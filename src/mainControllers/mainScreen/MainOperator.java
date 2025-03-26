@@ -1,11 +1,12 @@
-package mainControllers;
+package mainControllers.mainScreen;
 
+import mainControllers.gameControlls.GameOperator;
 import mainControllers.gameControlls.Player;
-
+import mainControllers.gameControlls.GameOperator;
 import javax.swing.*;
 
+
 import mainControllers.gameControlls.GameInstance;
-import mainControllers.mainScreen.TitleScreenFactory;
 
 // Main Operator jest pierwszym wywoływanym operatorem
 // WYMIENIA się odpowiedzialnością z Game Operator
@@ -14,9 +15,9 @@ import mainControllers.mainScreen.TitleScreenFactory;
 public class MainOperator {
     // holds reference to instance. Starts as null.
     private static MainOperator instance;
-    private JFrame windowFrame = WindowFrame.getInstance();
+    private JFrame windowFrame = MainWindowFrame.getInstance();
     private TitleScreenFactory titleScreenFactory = TitleScreenFactory.getInstance();
-    private GameInstance currentGame;
+    private GameOperator gameOperator;
     private Player player1;
     private Player player2;
 
@@ -47,10 +48,9 @@ public class MainOperator {
 
             if (player1Name != null && !player1Name.isEmpty() &&
                     player2Name != null && !player2Name.isEmpty()) {
-                player1 = new Player(player1Name);
-                player2 = new Player(player2Name);
-                currentGame = new GameInstance(player1, player2);
+                gameOperator = new GameOperator(windowFrame,new Player(player1Name), new Player(player2Name));
             } else {
+                // Instead we should change title screan parameters
                 JOptionPane.showMessageDialog(windowFrame,
                         "Both player names must be filled in!",
                         "Error",

@@ -1,4 +1,4 @@
-import mainControllers.MainOperator;
+import mainControllers.mainScreen.MainOperator;
 
 public class Main {
     public static void main(String[] args) {
