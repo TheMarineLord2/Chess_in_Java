@@ -1,6 +1,14 @@
 package chessboardElements.pieces.pieceType;
 
-import chessboardElements.pieces.Piece;
+import chessboardElements.chessboard.AvaiableColors;
+import chessboardElements.pieces.ChessPiece;
+import chessboardElements.pieces.ChessPieceType;
 
-public class Pawn extends Piece {
+public class Pawn extends ChessPiece {
+
+    public Pawn(AvaiableColors avaiableColors) {
+        super(avaiableColors);
+        setVisualRepresentation(ChessPieceType.PAWN);
+    }
+
 }

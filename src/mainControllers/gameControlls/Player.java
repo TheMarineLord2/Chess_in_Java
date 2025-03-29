@@ -11,9 +11,6 @@ public class Player {
     //domyślny konstruktor
     public Player(String name){
         playerName = name;
-        gamesWon = 0;
-        gamesLost = 0;
-        gamesDrawn = 0;
     }
     public String getName(){
         return playerName;

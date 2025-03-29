@@ -5,16 +5,34 @@ import chessboardElements.chessboard.Tile;
 import mainControllers.mainScreen.MainWindowFrame;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class GameScreenFactory {
+    // variables that really matter
+    private static final int MAIN_PANEL_WIDTH = 1200;
+    private static final int MAIN_PANEL_HEIGHT = 820;
+    private static final int TILE_SIZE = 100;
+
+
+    // variables polimorphic
+    private static final int CHESSBOARD_PANEL_SIZE = 8 * TILE_SIZE;
+    private static final int CHESSBOARD_PANEL_X = (MAIN_PANEL_WIDTH - CHESSBOARD_PANEL_SIZE)/2;
+    private static final int CHESSBOARD_PANEL_Y = (MAIN_PANEL_HEIGHT - CHESSBOARD_PANEL_SIZE)/2;
+    private static final int PLAYER_PANEL_WIDTH = CHESSBOARD_PANEL_X;
+    private static final int PLAYER_PANEL_HEIGHT = MAIN_PANEL_HEIGHT;
+
+    // static reference to important objects.
     private Chessboard chessboard;
     private Player white;
     private Player black;
     private MainWindowFrame mainWindowFrame;
 
+    // static reference to basic WindowPanels
+    private JLabel player1Panel;
+    private JLabel player2Panel;
+    private JPanel chessboardPanel;
+
     public GameScreenFactory(MainWindowFrame mainWindowFrame, GameInstance gameInstance) {
-        // Assign most important fields and refferences.
+        // Assign most important fields and references.
         this.chessboard = gameInstance.getChessboard();
         this.white = gameInstance.getPlayer(1);
         this.black = gameInstance.getPlayer(2);
@@ -27,34 +45,52 @@ public class GameScreenFactory {
     }
 
     private void CreateMainPanelBase(){
-        // Create a main panel occupying 1200x1000 area
+        // Create a main panel occupying MAIN_PANEL_WIDTH x MAIN_PANEL_HEIGHT area
+        
         JPanel mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new Dimension(1200, 1000));
-        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBounds(0,0,MAIN_PANEL_WIDTH, MAIN_PANEL_HEIGHT);
+        mainPanel.setLayout(null);
 
-        // Create an 800x800 chessboard panel
-        JPanel chessboardPanel = new JPanel(new GridLayout(8, 8));
-        chessboardPanel.setPreferredSize(new Dimension(800, 800));
+        // Create a chessboard panel occupying CHESSBOARD_PANEL_WIDTH x CHESSBOARD_PANEL_HEIGHT
+        chessboardPanel = new JPanel(null);
+        chessboardPanel.setBounds(CHESSBOARD_PANEL_X, CHESSBOARD_PANEL_Y, CHESSBOARD_PANEL_SIZE, CHESSBOARD_PANEL_SIZE);
 
         // Create player profile labels
-        JLabel player1Profile = new JLabel(white.getName(), SwingConstants.CENTER);
-        player1Profile.setPreferredSize(new Dimension(200, 1000));
-        JLabel player2Profile = new JLabel(black.getName(), SwingConstants.CENTER);
-        player2Profile.setPreferredSize(new Dimension(200, 1000));
+        player1Panel = new JLabel(white.getName());
+        player1Panel.setBounds(0, 0, PLAYER_PANEL_WIDTH, PLAYER_PANEL_HEIGHT);
+        player2Panel = new JLabel(black.getName());
+        player2Panel.setBounds(MAIN_PANEL_WIDTH - PLAYER_PANEL_WIDTH, 0, PLAYER_PANEL_WIDTH, PLAYER_PANEL_HEIGHT);
 
-
-        // Add components to the main panel
-        mainPanel.add(player1Profile, BorderLayout.WEST);
-        mainPanel.add(chessboardPanel, BorderLayout.CENTER);
-        mainPanel.add(player2Profile, BorderLayout.EAST);
-        Tile[][] tiles = chessboard.getPlayingField();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                chessboardPanel.add(tiles[i][j].getFieldButton());
-            }
-        }
+        // Create main structure
+        mainPanel.add(player1Panel);
+        mainPanel.add(chessboardPanel);
+        mainPanel.add(player2Panel);
+        // Finish the playing field
+        addTileButtonsToChessboard();
+        showChessPieces();
         // Add the main panel to the main window frame
         mainWindowFrame.add(mainPanel);
         mainWindowFrame.revalidate();
     }
+
+    private void addTileButtonsToChessboard(){
+        Tile[][] tiles = chessboard.getPlayingField();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                chessboardPanel.add(tiles[i][j].getFieldButton(i,j,TILE_SIZE));
+            }
+        }
+    }
+
+    private void showChessPieces() {
+        Tile[][] tiles = chessboard.getPlayingField();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (tiles[i][j].getPiece() != null) {
+                    tiles[i][j].showChessPiece();
+                }
+            }
+        }
+    }
+
 }
