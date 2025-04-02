@@ -1,4 +1,4 @@
-package mainControllers.mainScreen;
+package org.example.mainControllers.mainScreen;
 
 //import mainControllers.gameControlls.GameInstance;
 //import mainControllers.gameControlls.Player;

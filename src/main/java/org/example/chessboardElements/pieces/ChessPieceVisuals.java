@@ -1,11 +1,11 @@
-package chessboardElements.pieces;
+package org.example.chessboardElements.pieces;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-//import com.bacteriologic.gdx.graphics.Pixmap;
 
+// import com.badlogic.gdx.graphics.Color; // importing libGDX
 
-import chessboardElements.AvaiableColors;
+import org.example.chessboardElements.AvaiableColors;
 
 
 public enum ChessPieceVisuals {

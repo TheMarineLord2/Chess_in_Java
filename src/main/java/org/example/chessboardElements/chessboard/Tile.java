@@ -1,7 +1,7 @@
-package chessboardElements.chessboard;
+package org.example.chessboardElements.chessboard;
 
-import chessboardElements.AvaiableColors;
-import chessboardElements.pieces.ChessPiece;
+import org.example.chessboardElements.AvaiableColors;
+import org.example.chessboardElements.pieces.ChessPiece;
 
 import javax.swing.*;
 import java.awt.*;

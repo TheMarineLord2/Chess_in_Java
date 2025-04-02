@@ -1,7 +1,7 @@
-package chessboardElements.chessboard;
+package org.example.chessboardElements.chessboard;
 
-import chessboardElements.AvaiableColors;
-import chessboardElements.pieces.pieceType.*;
+import org.example.chessboardElements.AvaiableColors;
+import org.example.chessboardElements.pieces.pieceType.*;
 
 public class Chessboard {
     private Tile[][] playingField;

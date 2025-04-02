@@ -1,4 +1,4 @@
-package mainControllers.gameControlls;
+package org.example.mainControllers.gameControlls;
 
 public class Player {
     String playerName;

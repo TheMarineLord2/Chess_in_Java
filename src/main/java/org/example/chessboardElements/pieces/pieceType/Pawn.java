@@ -1,8 +1,8 @@
-package chessboardElements.pieces.pieceType;
+package org.example.chessboardElements.pieces.pieceType;
 
-import chessboardElements.AvaiableColors;
-import chessboardElements.pieces.ChessPiece;
-import chessboardElements.pieces.ChessPieceVisuals;
+import org.example.chessboardElements.AvaiableColors;
+import org.example.chessboardElements.pieces.ChessPiece;
+import org.example.chessboardElements.pieces.ChessPieceVisuals;
 
 public class Pawn extends ChessPiece {
 

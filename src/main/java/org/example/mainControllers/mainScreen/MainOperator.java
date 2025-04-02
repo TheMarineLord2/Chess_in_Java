@@ -1,12 +1,12 @@
-package mainControllers.mainScreen;
+package org.example.mainControllers.mainScreen;
 
-import mainControllers.gameControlls.GameOperator;
-import mainControllers.gameControlls.Player;
-import mainControllers.gameControlls.GameOperator;
+import org.example.mainControllers.gameControlls.GameOperator;
+import org.example.mainControllers.gameControlls.Player;
+import org.example.mainControllers.gameControlls.GameOperator;
 import javax.swing.*;
 
 
-import mainControllers.gameControlls.GameInstance;
+import org.example.mainControllers.gameControlls.GameInstance;
 
 // Main Operator jest pierwszym wywoływanym operatorem
 // WYMIENIA się odpowiedzialnością z Game Operator

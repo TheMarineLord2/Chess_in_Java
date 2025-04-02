@@ -1,6 +1,6 @@
-package chessboardElements.pieces;
+package org.example.chessboardElements.pieces;
 
-import chessboardElements.chessboard.Tile;
+import org.example.chessboardElements.chessboard.Tile;
 
 public interface PieceBehaviour {
     void move(Tile destination);

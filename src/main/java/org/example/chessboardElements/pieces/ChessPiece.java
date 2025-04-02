@@ -1,7 +1,7 @@
-package chessboardElements.pieces;
+package org.example.chessboardElements.pieces;
 
-import chessboardElements.chessboard.Tile;
-import chessboardElements.AvaiableColors;
+import org.example.chessboardElements.chessboard.Tile;
+import org.example.chessboardElements.AvaiableColors;
 
 import java.awt.image.BufferedImage;
 import java.util.List;

@@ -1,8 +1,8 @@
-package mainControllers.gameControlls;
+package org.example.mainControllers.gameControlls;
 
-import chessboardElements.chessboard.Chessboard;
-import chessboardElements.chessboard.Tile;
-import mainControllers.mainScreen.MainWindowFrame;
+import org.example.chessboardElements.chessboard.Chessboard;
+import org.example.chessboardElements.chessboard.Tile;
+import org.example.mainControllers.mainScreen.MainWindowFrame;
 
 import javax.swing.*;
 import java.awt.*;

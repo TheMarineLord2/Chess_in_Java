@@ -1,7 +1,7 @@
-package mainControllers.gameControlls;
+package org.example.mainControllers.gameControlls;
 
-import mainControllers.mainScreen.MainOperator;
-import mainControllers.mainScreen.MainWindowFrame;
+import org.example.mainControllers.mainScreen.MainOperator;
+import org.example.mainControllers.mainScreen.MainWindowFrame;
 
 import javax.swing.*;
 

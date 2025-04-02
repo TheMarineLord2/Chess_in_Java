@@ -1,6 +1,6 @@
-package mainControllers.gameControlls;
+package org.example.mainControllers.gameControlls;
 
-import chessboardElements.chessboard.Chessboard;
+import org.example.chessboardElements.chessboard.Chessboard;
 
 // GameInstance sprawuje bezpośredni nadzór nad
 // powołaniem gry, przypisaniem graczy, przebiegu
