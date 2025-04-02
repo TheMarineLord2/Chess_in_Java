@@ -19,7 +19,7 @@ public class GameOperator {
     }
 
     private void CreateGame(Player white, Player black){
-        gameInstance = new GameInstance(white, black);
-        gameScreenFactory = new GameScreenFactory(mainWindowFrame, gameInstance);
+        gameInstance = new GameInstance(white, black, GameScreenFactory.getTileSize());
+        gameScreenFactory = GameScreenFactory.getInstance(mainWindowFrame, gameInstance);
     }
 }

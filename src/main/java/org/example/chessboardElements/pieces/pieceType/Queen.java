@@ -1,12 +1,12 @@
 package chessboardElements.pieces.pieceType;
 
 import chessboardElements.pieces.ChessPiece;
-import chessboardElements.chessboard.AvaiableColors;
-import chessboardElements.pieces.ChessPieceType;
+import chessboardElements.AvaiableColors;
+import chessboardElements.pieces.ChessPieceVisuals;
 
 public class Queen extends ChessPiece {
     public Queen(AvaiableColors avaiableColors) {
         super(avaiableColors);
-        setVisualRepresentation(ChessPieceType.QUEEN);
+        setVisualRepresentation(ChessPieceVisuals.QUEEN);
     }
 }

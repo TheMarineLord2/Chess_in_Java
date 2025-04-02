@@ -1,5 +1,6 @@
 package chessboardElements.chessboard;
 
+import chessboardElements.AvaiableColors;
 import chessboardElements.pieces.pieceType.*;
 
 public class Chessboard {
@@ -7,8 +8,8 @@ public class Chessboard {
 
     // podczas wywołania wypełnia obiekty klasy
     // po zbudowaniu planszy wymaga ustawienia figur
-    public Chessboard(){
-        buildChessboard();
+    public Chessboard(int size){
+        buildChessboard(size);
     }
     // metody publiczne
     // zwraca plansze 8x8
@@ -16,16 +17,16 @@ public class Chessboard {
         return playingField;
     }
     // metody prywatne
-    private void buildChessboard() {
+    private void buildChessboard(int size) {
         playingField = new Tile[8][8];
         for (int i = 0; i < 8; i++) { // Rows
             for (int j = 0; j < 8; j++) { // Columns
                 if ((i + j) % 2 == 0) {
                     // Even sum of indexes: BLACK
-                    playingField[i][j] = new Tile(AvaiableColors.BLACK);
+                    playingField[i][j] = new Tile(AvaiableColors.BLACK, i, j, size);
                 } else {
                     // Odd sum of indexes: WHITE
-                    playingField[i][j] = new Tile(AvaiableColors.WHITE);
+                    playingField[i][j] = new Tile(AvaiableColors.WHITE, i, j, size);
                 }
             }
         }

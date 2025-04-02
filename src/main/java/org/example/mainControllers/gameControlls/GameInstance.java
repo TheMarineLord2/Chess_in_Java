@@ -16,10 +16,10 @@ public class GameInstance {
     // zablokowanie domyślnego konstruktora
     private GameInstance(){}
     // konstruktor właściwy
-    public GameInstance(Player white, Player black){
+    public GameInstance(Player white, Player black, int chessboardSize){
         this.white = white;
         this.black = black;
-        this.chessboard = new Chessboard();
+        this.chessboard = new Chessboard(chessboardSize);
         this.turn_counter = 0;
     }
 

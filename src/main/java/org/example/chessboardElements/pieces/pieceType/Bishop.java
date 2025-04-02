@@ -1,13 +1,13 @@
 package chessboardElements.pieces.pieceType;
 
 import chessboardElements.pieces.ChessPiece;
-import chessboardElements.chessboard.AvaiableColors;
-import chessboardElements.pieces.ChessPieceType;
+import chessboardElements.AvaiableColors;
+import chessboardElements.pieces.ChessPieceVisuals;
 
 public class Bishop extends ChessPiece {
 
     public Bishop(AvaiableColors avaiableColors) {
         super(avaiableColors);
-        setVisualRepresentation(ChessPieceType.BISHOP);
+        setVisualRepresentation(ChessPieceVisuals.BISHOP);
     }
 }
