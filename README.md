@@ -2,9 +2,10 @@ Chess game with graphic interface.
 
 Skills learned:
 - OOP paradigms
-- Maven project
-Graphics:
+- Gradle (basics)
+
+
+Liblaries:
+- AWT
 - Swing
 - GDXlib
-- Cloning someone's else repository to adress
-their liblary (GDX)
