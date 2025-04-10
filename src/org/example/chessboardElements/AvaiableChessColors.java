@@ -3,7 +3,7 @@ package org.example.chessboardElements;
 import java.awt.*;
 //import java.security.PublicKey;
 
-public enum AvaiableColors {
+public enum AvaiableChessColors {
     WHITE(Color.getHSBColor(69,0.05f,0.95f), Color.getHSBColor(0,0.0f,0.75f),
             Color.getHSBColor(0,0.0f,1.0f)),
     BLACK(Color.getHSBColor(69,0.05f,0.2f), Color.getHSBColor(0,0.0f,0.25f),
@@ -14,7 +14,7 @@ public enum AvaiableColors {
     private final Color shadowColor;
 
     // Konstruktor pozala na zapisanie danych w enum.
-    AvaiableColors(Color tileColor, Color pieceColor, Color shadowColor) {
+    AvaiableChessColors(Color tileColor, Color pieceColor, Color shadowColor) {
         this.tileColor = tileColor;
         this.pieceColor = pieceColor;
         this.shadowColor = shadowColor;

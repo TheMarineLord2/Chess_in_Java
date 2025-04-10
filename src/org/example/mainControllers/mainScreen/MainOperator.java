@@ -15,7 +15,7 @@ import org.example.mainControllers.gameControlls.GameInstance;
 public class MainOperator {
     // holds reference to instance. Starts as null.
     private static MainOperator instance;
-    private JFrame windowFrame = MainWindowFrame.getInstance();
+    private MainWindowFrame windowFrame = MainWindowFrame.getInstance();
     private TitleScreenFactory titleScreenFactory = TitleScreenFactory.getInstance();
     private GameOperator gameOperator;
     private Player player1;
@@ -48,7 +48,9 @@ public class MainOperator {
 
             if (player1Name != null && !player1Name.isEmpty() &&
                     player2Name != null && !player2Name.isEmpty()) {
-                gameOperator = new GameOperator(windowFrame,new Player(player1Name), new Player(player2Name));
+                player1 = new Player(player1Name);
+                player2 = new Player(player2Name);
+                gameOperator = GameOperator.getInstance();
             } else {
                 // Instead we should change title screan parameters
                 JOptionPane.showMessageDialog(windowFrame,
@@ -59,4 +61,13 @@ public class MainOperator {
         }
     }
 
+    public Player getPlayer1(){
+        return player1;
+    }
+    public Player getPlayer2() {
+        return player2;
+    }
+    public MainWindowFrame getMainWindowFrame(){
+        return windowFrame;
+    }
 }
