@@ -1,6 +1,6 @@
 package org.example.mainControllers.gameControlls;
 
-import org.example.chessboardElements.AvaiableChessColors;
+import org.example.chessboardElements.ChessPieceColors;
 import org.example.chessboardElements.chessboard.Chessboard;
 import org.example.chessboardElements.pieces.ChessPiece;
 import org.example.chessboardElements.pieces.pieceType.Bishop;
@@ -20,7 +20,7 @@ public class GameInstance {
     private int turn_counter;
     private Player white;
     private Player black;
-    private AvaiableChessColors currentlyPlaying;
+    private ChessPieceColors currentlyPlaying;
     private int numberOfinteractablePieces;
     private Pawn enPassantPawn; // pawn that jumped 2 places last turn
 
@@ -30,10 +30,10 @@ public class GameInstance {
     }
 
     // konstruktor właściwy
-    public GameInstance(Player white, Player black, int chessboardSize) {
+    public GameInstance(Player white, Player black, int tileSizeInPixels) {
         this.white = white;
         this.black = black;
-        this.chessboard = new Chessboard(chessboardSize);
+        this.chessboard = new Chessboard(tileSizeInPixels);
         this.turn_counter = 0;
         this.enPassantPawn = null; // Initialize enPassantPawn to null
     }
@@ -56,17 +56,17 @@ public class GameInstance {
 
     public void takeATurn(){
         if(turn_counter%2==0){
-            setControlsTo(AvaiableChessColors.BLACK);
+            setControlsTo(ChessPieceColors.BLACK);
         }
         else {
-            setControlsTo(AvaiableChessColors.WHITE);
+            setControlsTo(ChessPieceColors.WHITE);
         }
         getThroughWinconditions();
         unCheckEnPassant();
         
     }
 
-    private void setControlsTo(AvaiableChessColors color) {
+    private void setControlsTo(ChessPieceColors color) {
         this.currentlyPlaying = color;
         makeChesPiecesOfThisColourClickable();
     }
@@ -126,15 +126,15 @@ public class GameInstance {
         for (ChessPiece piece : ammountOfMaterial) {
             switch (piece) {
                 case King king:
-                    if (king.getColor() == AvaiableChessColors.WHITE) whiteKing = true;
-                    else if (king.getColor() == AvaiableChessColors.BLACK) blackKing = true;
+                    if (king.getColor() == ChessPieceColors.WHITE) whiteKing = true;
+                    else if (king.getColor() == ChessPieceColors.BLACK) blackKing = true;
                     break;
                 case Bishop bishop:
-                    if (bishop.getColor() == AvaiableChessColors.WHITE) whiteBishops++;
+                    if (bishop.getColor() == ChessPieceColors.WHITE) whiteBishops++;
                     else blackBishops++;
                     break;
                 case Knight knight:
-                    if (knight.getColor() == AvaiableChessColors.WHITE) whiteKnights++;
+                    if (knight.getColor() == ChessPieceColors.WHITE) whiteKnights++;
                     else blackKnights++;
                     break;
                 case null:
@@ -160,7 +160,7 @@ public class GameInstance {
     // Public method to set the en passant pawn reference
     private void gameLost(){
         endGame();
-        System.out.println("Game won by " + (currentlyPlaying == AvaiableChessColors.WHITE ? "Black" : "White"));
+        System.out.println("Game won by " + (currentlyPlaying == ChessPieceColors.WHITE ? "Black" : "White"));
     }
     private void drawDue(String reasonWhy){
         endGame();

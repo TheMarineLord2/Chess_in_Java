@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 // import com.badlogic.gdx.graphics.Color; // importing libGDX
 
-import org.example.chessboardElements.AvaiableChessColors;
+import org.example.chessboardElements.ChessPieceColors;
 
 
 public enum ChessPieceVisuals {
@@ -29,22 +29,22 @@ public enum ChessPieceVisuals {
     ChessPieceVisuals(char symbol, char shadow) {
         this.symbol = symbol;
         this.shadow = shadow;
-        this.whiteImage = generateImage(symbol, shadow, AvaiableChessColors.WHITE);
-        this.blackImage = generateImage(symbol, shadow, AvaiableChessColors.BLACK);
+        this.whiteImage = generateImage(symbol, shadow, ChessPieceColors.WHITE);
+        this.blackImage = generateImage(symbol, shadow, ChessPieceColors.BLACK);
     }
 
-    private static BufferedImage generateImage(char symbol, char shadow, AvaiableChessColors pieceColor) {
+    private static BufferedImage generateImage(char symbol, char shadow, ChessPieceColors pieceColor) {
         int element_size = 64;
         int offset = 1;
 
         // If piece is white then background black.
         // Reverse color for background
-        AvaiableChessColors backgroudColor;
-        if(pieceColor == AvaiableChessColors.WHITE){
-            backgroudColor = AvaiableChessColors.BLACK;
+        ChessPieceColors backgroudColor;
+        if(pieceColor == ChessPieceColors.WHITE){
+            backgroudColor = ChessPieceColors.BLACK;
         }
         else{
-            backgroudColor = AvaiableChessColors.WHITE;
+            backgroudColor = ChessPieceColors.WHITE;
         }
         // Base propeties
         BufferedImage pieceImage = new BufferedImage( element_size,element_size, BufferedImage.TYPE_INT_ARGB);
@@ -86,8 +86,8 @@ public enum ChessPieceVisuals {
         return symbol;
     }
 
-    public BufferedImage getImage(AvaiableChessColors color) {
-        if (color == AvaiableChessColors.WHITE) {
+    public BufferedImage getImage(ChessPieceColors color) {
+        if (color == ChessPieceColors.WHITE) {
             return whiteImage;
         } else {
             return blackImage;

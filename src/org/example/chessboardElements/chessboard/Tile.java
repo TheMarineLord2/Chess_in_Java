@@ -1,9 +1,9 @@
 package org.example.chessboardElements.chessboard;
 
-import org.example.chessboardElements.AvaiableChessColors;
+import org.example.chessboardElements.ChessPieceColors;
 import org.example.chessboardElements.SpecialTileColors;
 import org.example.chessboardElements.pieces.ChessPiece;
-import org.example.mainControllers.gameControlls.GameOperator;
+import org.example.chessboardElements.GameOperator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,16 +21,17 @@ public class Tile {
     // The JButton visual component representing the tile on the chessboard.
     private JButton button;
     // The original color of the tile, either BLACK or WHITE.
-    private AvaiableChessColors tileColor;
+    private ChessPieceColors tileColor;
     // The chess piece currently occupying this tile, or null if empty.
-    private ChessPiece chessPiece;
+    private ChessPiece chessPiece = null;
     // The row and column coordinates of the tile on the chessboard.
     private int row, column;
     // A list of chess pieces observing this tile (used for special rules like attacks).
     private List<ChessPiece> listOfObservers = new java.util.ArrayList<>();
     // A MouseAdapter to handle mouse interactions on the tile.
-    private MouseAdapter mouseAdapter;
-
+    private Tile selfRefference;
+    private MouseAdapter interactiveAdapter;
+    private MouseAdapter pasiveAdapter;
     // ******************
     // Constructors
     // ******************
@@ -38,66 +39,46 @@ public class Tile {
     /**
      * Constructor to initialize a Tile with its color, position, and size.
      *
-     * @param avaiableChessColors The color of the tile (BLACK or WHITE).
+     * @param chessPieceColors The color of the tile (BLACK or WHITE).
      * @param row                 The row number of the tile on the chessboard.
      * @param column              The column number of the tile on the chessboard.
      * @param size                The size (width and height) of the tile in pixels.
      */
-    public Tile(AvaiableChessColors avaiableChessColors, int row, int column, int size) {
-        setTileColor(avaiableChessColors);
+
+    public Tile(ChessPieceColors chessPieceColors, int row, int column, int size) {
+        this.tileColor = chessPieceColors;
         this.row = row;
         this.column = column;
+        this.selfRefference = this;
         setUpFieldButtonProperties(size);
         setUpFieldButtonListeners();
     }
 
-    // metody publiczne
-    /*public void changeLocationOfFieldButton(int x, int y){
-        fieldButton.setLocation(x,y);
-    }*/
-
-    /**
-     * Places a chess piece on this tile.
-     *
-     * @param chessPiece The chess piece to set on this tile.
-     */
+    // SET TILE.PIECE = piece
     public void setPiece(ChessPiece chessPiece) {
-        chessPiece.setHomeTile(this);
-        this.chessPiece = chessPiece;
+        if(chessPiece != null) {
+            chessPiece.setHomeTile(this);
+            this.chessPiece = chessPiece;
+        }
+        else {
+            chessPiece.setHomeTile(null);
+            chessPiece = null;
+        }
     }
 
-    /**
-     * Removes the chess piece from this tile, if any.
-     */
-    public void removePiece() {
-        chessPiece.setHomeTile(null);
-        chessPiece = null;
-    }
 
-    /**
-     * Retrieves the chess piece currently on this tile.
-     *
-     * @return The chess piece on this tile, or null if the tile is empty.
-     */
     public ChessPiece getPiece() {
         return chessPiece;
     }
-    // public AvaiableChessColors getOriginalColor(){return tileColor;}
 
-    /**
-     * Retrieves the JButton visual component representing this tile.
-     *
-     * @return The JButton representing this tile.
-     */
     public JButton getButton() {
         return button;
     }
 
-    /**
-     * Updates the visual representation of the chess piece on this tile's button.
-     * If the tile is empty, it removes any existing icon.
+    /** If chess piece = null - remove icon from button.
+     * Else change icon to inhabitant of tile
      */
-    public void refreshTileIcon() {
+    public void refreshChessPieceIcon() {
         if (chessPiece != null && button != null) {
             BufferedImage chessPieceImage = chessPiece.getChessPieceVisuals();
             button.setIcon(new ImageIcon(chessPieceImage));
@@ -106,117 +87,100 @@ public class Tile {
         }
     }
 
-    /**
-     * Highlights this tile with a special color, often used for valid moves or selections.
-     *
-     * @param specialTileColors The highlight color to set on this tile.
+    /** Uses temporary SpecialTileColor to paint important buttons
      */
     public void paintButton(SpecialTileColors specialTileColors) {
         setInteractable(true);
         button.setBackground(specialTileColors.getColor());
     }
 
-    /**
-     * Resets the tile's background color to its original color (BLACK or WHITE).
+    /** Resets the tile's color to original.
      */
-    public void resetTileButtonColor() {
+    public void resetButtonColor() {
         setInteractable(false);
         button.setBackground(tileColor.getTileColor());
     }
 
-    /**
-     * Sets the original color of this tile.
-     *
-     * @param avaiableChessColors The color to assign to this tile (BLACK or WHITE).
-     */
-    private void setTileColor(AvaiableChessColors avaiableChessColors) {
-        this.tileColor = avaiableChessColors;
-    }
 
     /**
-     * Sets up the button's default properties such as size, layout, and visibility.
-     *
-     * @param size The size of the tile in pixels (width and height).
      */
     private void setUpFieldButtonProperties(int size) {
         button = new JButton();
         button.setLayout(new GridLayout(1, 1));
         button.setBounds(row * size, column * size, size, size);
-        resetTileButtonColor();
+        resetButtonColor();
         button.setVisible(true);
     }
 
-    /**
-     * Configures listeners for mouse interactions on the button.
-     * The listener calls a handler in the GameOperator when clicked.
-     */
     private void setUpFieldButtonListeners() {
-        mouseAdapter = new MouseAdapter() {
+        interactiveAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (chessPiece != null) {
-                    GameOperator.getInstance().clickedTile(row, column);
+                    GameOperator.getInstance().interactiveTileClicked(selfRefference);
                 }
                 }
             };
-        
+        pasiveAdapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (chessPiece != null) {
+                    GameOperator.getInstance().passiveTileClicked();
+                }
+            }
+        };
+
     }
 
-    /**
-     * Enables or disables interactions with this tile.
-     *
+    /** Enables or disables preconfigured mouse listener.
      * @param b True if the tile should be interactable; false otherwise.
      */
     public void setInteractable(boolean b) {
         if (b) {
-            button.addMouseListener(mouseAdapter);
-        } else {
+            // set mouse listener to handle active behaviour.
             for (MouseListener listener : button.getMouseListeners()) {
+                // set mouse listener to handle passive behaviour
                 button.removeMouseListener(listener);
             }
+            button.addMouseListener(interactiveAdapter);
+        } else {
+            for (MouseListener listener : button.getMouseListeners()) {
+                // set mouse listener to handle passive behaviour
+                button.removeMouseListener(listener);
+            }
+            button.addMouseListener(pasiveAdapter);
         }
     }
 
-    /**
-     * Checks if this tile has any mouse listeners.
-     *
+    /** Checks if this tile has any mouse listeners.
      * @return True if the tile has listeners; false otherwise.
      */
     public boolean hasListeners() {
         return button.getMouseListeners().length > 0;
     }
 
-    /**
-     * Gets the row position of this tile on the chessboard.
-     *
-     * @return The row position of the tile.
-     */
+    // Getter and setter for coordinates.
     public int getRow() {
         return row;
     }
-
-    /**
-     * Gets the column position of this tile on the chessboard.
-     *
-     * @return The column position of the tile.
-     */
     public int getColumn() {
         return column;
     }
 
-    /**
-     * Removes a chess piece from the list of observers for this tile.
-     *
-     * @param chessPiece The chess piece to remove from the observer list.
-     */
+    // Adds and removes pieces from ovservers
     public void removeObserver(ChessPiece chessPiece) {
-        listOfObservers.remove(chessPiece);
+        try {
+            if (chessPiece != null) {
+                listOfObservers.remove(chessPiece);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to remove observer: " + e.getMessage() +
+                    "\nIt is possible that the observer is not assigned to the listOfObservers of this tile." +
+                    "\nTile Details: Row=" + row + ", Column=" + column + ", Observers=" + listOfObservers);
+        }
     }
 
-    /**
-     * Adds the current chess piece on this tile to the list of observers.
-     */
-    public void addObserver() {
+    public void addObserver(ChessPiece chessPiece) {
         listOfObservers.add(chessPiece);
     }
 }

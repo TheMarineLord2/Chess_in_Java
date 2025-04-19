@@ -1,5 +1,6 @@
 package org.example.mainControllers.gameControlls;
 
+import org.example.chessboardElements.GameOperator;
 import org.example.chessboardElements.SpecialTileColors;
 import org.example.chessboardElements.chessboard.Chessboard;
 import org.example.chessboardElements.chessboard.Tile;
@@ -182,7 +183,7 @@ public class GameScreenFactory {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (tiles[i][j].getPiece() != null) {
-                    tiles[i][j].refreshTileIcon();
+                    tiles[i][j].refreshChessPieceIcon();
                 }
             }
         }
@@ -213,11 +214,11 @@ public class GameScreenFactory {
      * Resets all tile colors on the chessboard to their default state.
      */
     public void resetChessboardColors() {
-        chessboard.resetTileButtonColors();
+        chessboard.resetButtonColors();
         mainWindowFrame.repaint();
     }
 
-    public void repaint(Map<SpecialTileColors, Tile[]> importantTiles) {
+    public void paintSpecialTiles(Map<SpecialTileColors, Tile[]> importantTiles) {
         for (Map.Entry<SpecialTileColors, Tile[]> entry : importantTiles.entrySet()) {
             for (Tile tile : entry.getValue()) {
                 tile.paintButton(entry.getKey());
@@ -228,7 +229,7 @@ public class GameScreenFactory {
     public void resetColors(Map<SpecialTileColors, Tile[]> importantTiles){
         for (Map.Entry<SpecialTileColors, Tile[]> entry : importantTiles.entrySet()) {
             for (Tile tile : entry.getValue()) {
-                tile.resetTileButtonColor();
+                tile.resetButtonColor();
             }
         }
         mainWindowFrame.repaint();
