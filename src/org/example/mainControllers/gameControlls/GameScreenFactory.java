@@ -1,7 +1,7 @@
 package org.example.mainControllers.gameControlls;
 
-import org.example.chessboardElements.GameOperator;
-import org.example.chessboardElements.SpecialTileColors;
+import org.example.chessboardElements.ChessPieceColors;
+import org.example.chessboardElements.SpecTileFunc;
 import org.example.chessboardElements.chessboard.Chessboard;
 import org.example.chessboardElements.chessboard.Tile;
 import org.example.mainControllers.mainScreen.MainWindowFrame;
@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,7 +30,7 @@ public class GameScreenFactory {
     private static final int MAIN_PANEL_WIDTH = 1200;
     private static final int MAIN_PANEL_HEIGHT = 820;
     private static final int TILE_SIZE = 100;
-    private static final int OUT_OF_BOUNDS_MARIGIN_OF_ERROR = 10;
+    private static final int OUT_OF_BOUNDS_MARGIN_OF_ERROR = 10;
     // Derived variables used for positioning and sizing the chessboard and player panels.
     private static final int CHESSBOARD_PANEL_SIZE = 8 * TILE_SIZE;
     private static final int CHESSBOARD_PANEL_X = (MAIN_PANEL_WIDTH - CHESSBOARD_PANEL_SIZE)/2;
@@ -37,10 +38,10 @@ public class GameScreenFactory {
     private static final int PLAYER_PANEL_WIDTH = CHESSBOARD_PANEL_X;
     private static final int PLAYER_PANEL_HEIGHT = MAIN_PANEL_HEIGHT;
     // Variables used for setting up boundaries and margins for the out-of-bounds mouse listener.
-    private static final int OUT_OF_BOUNDS_X = CHESSBOARD_PANEL_X - OUT_OF_BOUNDS_MARIGIN_OF_ERROR;
-    private static final int OUT_OF_BOUNDS_Y = CHESSBOARD_PANEL_Y - OUT_OF_BOUNDS_MARIGIN_OF_ERROR;
-    private static final int OUT_OF_BOUNDS_WIDTH = CHESSBOARD_PANEL_SIZE + 2 * OUT_OF_BOUNDS_MARIGIN_OF_ERROR;
-    private static final int OUT_OF_BOUNDS_HEIGHT = CHESSBOARD_PANEL_SIZE + 2 * OUT_OF_BOUNDS_MARIGIN_OF_ERROR;
+    private static final int OUT_OF_BOUNDS_X = CHESSBOARD_PANEL_X - OUT_OF_BOUNDS_MARGIN_OF_ERROR;
+    private static final int OUT_OF_BOUNDS_Y = CHESSBOARD_PANEL_Y - OUT_OF_BOUNDS_MARGIN_OF_ERROR;
+    private static final int OUT_OF_BOUNDS_WIDTH = CHESSBOARD_PANEL_SIZE + 2 * OUT_OF_BOUNDS_MARGIN_OF_ERROR;
+    private static final int OUT_OF_BOUNDS_HEIGHT = CHESSBOARD_PANEL_SIZE + 2 * OUT_OF_BOUNDS_MARGIN_OF_ERROR;
 
     // Static references to key game objects such as players, chessboard, and game operator.
     private final Chessboard chessboard;
@@ -60,8 +61,8 @@ public class GameScreenFactory {
         // Initialize core fields by retrieving the current game state and necessary objects.
         this.gameOperator = GameOperator.getInstance();
         this.chessboard = gameOperator.getGameInstance().getChessboard();
-        this.white = gameOperator.getGameInstance().getPlayer(1);
-        this.black = gameOperator.getGameInstance().getPlayer(2);
+        this.white = gameOperator.getGameInstance().getPlayerObject(ChessPieceColors.WHITE);
+        this.black = gameOperator.getGameInstance().getPlayerObject(ChessPieceColors.BLACK);
         this.mainWindowFrame = gameOperator.getMainWindowFrame();
         // setUpOutOfBoundsListener();
 
@@ -218,16 +219,18 @@ public class GameScreenFactory {
         mainWindowFrame.repaint();
     }
 
-    public void paintSpecialTiles(Map<SpecialTileColors, Tile[]> importantTiles) {
-        for (Map.Entry<SpecialTileColors, Tile[]> entry : importantTiles.entrySet()) {
-            for (Tile tile : entry.getValue()) {
-                tile.paintButton(entry.getKey());
+    public void paintSpecialTiles(Map<SpecTileFunc, List<Tile>> importantTiles) {
+        for (Map.Entry<SpecTileFunc, List<Tile>> entry : importantTiles.entrySet()) {
+            if(entry.getKey() != SpecTileFunc.POTENTIALLY_OBSERVED){
+                for (Tile tile : entry.getValue()) {
+                    tile.paintButton(entry.getKey());
+                }
             }
         }
         mainWindowFrame.repaint();
     }
-    public void resetColors(Map<SpecialTileColors, Tile[]> importantTiles){
-        for (Map.Entry<SpecialTileColors, Tile[]> entry : importantTiles.entrySet()) {
+    public void resetColors(Map<SpecTileFunc, List<Tile>> importantTiles){
+        for (Map.Entry<SpecTileFunc, List<Tile>> entry : importantTiles.entrySet()) {
             for (Tile tile : entry.getValue()) {
                 tile.resetButtonColor();
             }

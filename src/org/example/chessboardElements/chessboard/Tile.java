@@ -1,14 +1,17 @@
 package org.example.chessboardElements.chessboard;
 
 import org.example.chessboardElements.ChessPieceColors;
-import org.example.chessboardElements.SpecialTileColors;
+import org.example.chessboardElements.SpecTileFunc;
 import org.example.chessboardElements.pieces.ChessPiece;
-import org.example.chessboardElements.GameOperator;
+import org.example.chessboardElements.pieces.pieceType.King;
+import org.example.chessboardElements.pieces.pieceType.Rook;
+import org.example.mainControllers.gameControlls.GameOperator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +24,7 @@ public class Tile {
     // The JButton visual component representing the tile on the chessboard.
     private JButton button;
     // The original color of the tile, either BLACK or WHITE.
-    private ChessPieceColors tileColor;
+    private final ChessPieceColors tileColor;
     // The chess piece currently occupying this tile, or null if empty.
     private ChessPiece chessPiece = null;
     // The row and column coordinates of the tile on the chessboard.
@@ -31,12 +34,12 @@ public class Tile {
     // A MouseAdapter to handle mouse interactions on the tile.
     private Tile selfRefference;
     private MouseAdapter interactiveAdapter;
-    private MouseAdapter pasiveAdapter;
-    // ******************
-    // Constructors
-    // ******************
+    private MouseAdapter passiveAdapter;
+    private final ChessPiece[] referenceCastling = new ChessPiece[2];
+    private ChessPiece referenceEnPAssant = null;
 
     /**
+     *
      * Constructor to initialize a Tile with its color, position, and size.
      *
      * @param chessPieceColors The color of the tile (BLACK or WHITE).
@@ -61,8 +64,10 @@ public class Tile {
             this.chessPiece = chessPiece;
         }
         else {
-            chessPiece.setHomeTile(null);
-            chessPiece = null;
+            if(this.chessPiece!= null){
+                this.chessPiece.setHomeTile(null);
+                this.chessPiece = null;
+            }
         }
     }
 
@@ -73,6 +78,14 @@ public class Tile {
 
     public JButton getButton() {
         return button;
+    }
+
+    // Getter and setter for coordinates.
+    public int getY() {
+        return row;
+    }
+    public int getX() {
+        return column;
     }
 
     /** If chess piece = null - remove icon from button.
@@ -89,9 +102,9 @@ public class Tile {
 
     /** Uses temporary SpecialTileColor to paint important buttons
      */
-    public void paintButton(SpecialTileColors specialTileColors) {
+    public void paintButton(SpecTileFunc specialTileFunctions) {
         setInteractable(true);
-        button.setBackground(specialTileColors.getColor());
+        button.setBackground(specialTileFunctions.getColor());
     }
 
     /** Resets the tile's color to original.
@@ -119,21 +132,20 @@ public class Tile {
                 if (chessPiece != null) {
                     GameOperator.getInstance().interactiveTileClicked(selfRefference);
                 }
-                }
-            };
-        pasiveAdapter = new MouseAdapter() {
+            }
+        };
+        passiveAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (chessPiece != null) {
+                if (chessPiece == null) {
                     GameOperator.getInstance().passiveTileClicked();
                 }
             }
         };
-
     }
 
-    /** Enables or disables preconfigured mouse listener.
-     * @param b True if the tile should be interactable; false otherwise.
+    /** Set's up passive or active mouse listener
+     * @param b True if the tile should be interactable.
      */
     public void setInteractable(boolean b) {
         if (b) {
@@ -148,7 +160,7 @@ public class Tile {
                 // set mouse listener to handle passive behaviour
                 button.removeMouseListener(listener);
             }
-            button.addMouseListener(pasiveAdapter);
+            button.addMouseListener(passiveAdapter);
         }
     }
 
@@ -159,15 +171,7 @@ public class Tile {
         return button.getMouseListeners().length > 0;
     }
 
-    // Getter and setter for coordinates.
-    public int getRow() {
-        return row;
-    }
-    public int getColumn() {
-        return column;
-    }
-
-    // Adds and removes pieces from ovservers
+    // Adds and removes pieces from observers
     public void removeObserver(ChessPiece chessPiece) {
         try {
             if (chessPiece != null) {
@@ -182,5 +186,37 @@ public class Tile {
 
     public void addObserver(ChessPiece chessPiece) {
         listOfObservers.add(chessPiece);
+    }
+    public List<ChessPiece> getListOfObservers() {
+        return listOfObservers;
+    }
+
+    public boolean isSafeToStepOn(ChessPieceColors alliedColor) {
+        for (ChessPiece observer : listOfObservers) {
+            if (observer.getColor() != alliedColor) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public void createCastlingOption(King king, Rook rook){
+        referenceCastling[0] = king;
+        referenceCastling[1]= rook;
+    }
+
+    public void removeCastlingOption(ChessPiece caller) {
+        if (referenceCastling[0] != null) {
+            referenceCastling[0].getImportantTiles().remove(this);
+        }
+        if (referenceCastling[1] != null) {
+            referenceCastling[1].getImportantTiles().remove(this);
+            if (caller instanceof King) {
+                // add this tile as available tile for the rook
+                referenceCastling[1]
+                        .getImportantTiles()
+                        .computeIfAbsent(SpecTileFunc.AVAILABLE_TILE, k -> new ArrayList<>())
+                        .add(this);
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@ package org.example.chessboardElements;
 
 import java.awt.*;
 
-public enum SpecialTileColors {
+public enum SpecTileFunc {
     /**
      * Light blue color to represent available tiles for movement.
      */
@@ -21,11 +21,14 @@ public enum SpecialTileColors {
     /**
      * Yellow color to represent special moves (e.g., castling, en passant).
      */
-    SPECIAL_MOVE(new Color(255, 213, 0));
+    SPECIAL_MOVE(new Color(255, 213, 0)),
+    /** abstract tile color usefull when looking for potential pins,
+     * checks and everything threatening important tiles */
+    POTENTIALLY_OBSERVED(new Color(255, 0, 200, 221));
 
     private final Color color;
 
-    SpecialTileColors(Color color) {
+    SpecTileFunc(Color color) {
         this.color = color;
     }
 

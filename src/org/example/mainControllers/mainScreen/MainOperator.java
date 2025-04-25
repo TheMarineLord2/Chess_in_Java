@@ -1,6 +1,6 @@
 package org.example.mainControllers.mainScreen;
 
-import org.example.chessboardElements.GameOperator;
+import org.example.mainControllers.gameControlls.GameOperator;
 import org.example.mainControllers.gameControlls.Player;
 
 import javax.swing.*;
