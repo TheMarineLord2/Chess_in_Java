@@ -1,7 +1,9 @@
 package org.example.mainControllers.gameControlls;
 
 import org.example.chessboardElements.ChessPieceColors;
+import org.example.chessboardElements.SpecTileFunc;
 import org.example.chessboardElements.chessboard.Chessboard;
+import org.example.chessboardElements.chessboard.Tile;
 import org.example.chessboardElements.pieces.ChessPiece;
 import org.example.chessboardElements.pieces.pieceType.Bishop;
 import org.example.chessboardElements.pieces.pieceType.King;
@@ -9,6 +11,8 @@ import org.example.chessboardElements.pieces.pieceType.Knight;
 import org.example.chessboardElements.pieces.pieceType.Pawn;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 // GameInstance sprawuje bezpośredni nadzór nad
 // powołaniem gry, przypisaniem graczy, przebiegu
@@ -18,8 +22,8 @@ public class GameInstance {
     // vartości kontrolowane przez instancje
     private Chessboard chessboard;
     private int turn_counter;
-    private Player white;
-    private Player black;
+    private Player whitePlayer;
+    private Player blackPlayer;
     private ChessPieceColors currentlyPlaying;
     private int numberOfinteractablePieces;
     private Pawn enPassantPawn; // pawn that jumped 2 places last turn
@@ -30,19 +34,19 @@ public class GameInstance {
     }
 
     // konstruktor właściwy
-    public GameInstance(Player white, Player black, int tileSizeInPixels) {
-        this.white = white;
-        this.black = black;
+    public GameInstance(Player whitePlayer, Player blackPlayer, int tileSizeInPixels) {
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
         this.chessboard = new Chessboard(tileSizeInPixels);
         this.turn_counter = 0;
         this.enPassantPawn = null; // Initialize enPassantPawn to null
     }
 
-    public Player getPlayer(int playerNumber){
-        if(playerNumber == 1){
-            return white;
-        }else if(playerNumber == 2){
-            return black;
+    public Player getPlayerObject(ChessPieceColors playerColor){
+        if(playerColor == ChessPieceColors.WHITE ){
+            return whitePlayer;
+        }else if(playerColor == ChessPieceColors.BLACK){
+            return blackPlayer;
         }else{
             return null;
         }
@@ -61,7 +65,7 @@ public class GameInstance {
         else {
             setControlsTo(ChessPieceColors.WHITE);
         }
-        getThroughWinconditions();
+        getThroughConditions();
         unCheckEnPassant();
         
     }
@@ -75,20 +79,20 @@ public class GameInstance {
         // Clear the list of interactable pieces and available material.
         numberOfinteractablePieces = 0;
         var tiles = chessboard.getPlayingField();
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles[i].length; j++) {
-                var piece = tiles[i][j].getPiece();
+        for (Tile[] tile : tiles) {
+            for (Tile value : tile) {
+                var piece = value.getPiece();
                 if (piece != null && piece.getColor() == currentlyPlaying) {
-                    piece.setInteractableIfPossibleMoves(true);
-                    if(piece.isTrulyInteractable()){
+                    if (piece.hasAvailableMoves()) {
                         numberOfinteractablePieces++;
+                        value.setInteractable(true);
                     }
-                } else tiles[i][j].setInteractable(false);
+                } /* if wrng colr, null, noMoves4ThisPiece */ else value.setInteractable(false);
             }
         }
     }
 
-    private void getThroughWinconditions(){
+    private void getThroughConditions(){
         // checkCheckmate();
         checkStalemate();
         // checkThreefoldRepetition();
@@ -96,8 +100,33 @@ public class GameInstance {
         // if piece taken:
         checkInsufficientMaterial();
     }
-    private void checkCheckmate(){
-        
+
+    /** if king not threatened == false
+     * else king look around and see if there are moves avaiable
+     * AVAILABLE ALLIES TO COVER FOR KING ARE NOT YET SEEN */
+    private void checkCheckmate() {
+        // Get the king of the currently playing color
+        ChessPiece king = chessboard.getAmountOfMaterial().stream()
+                .filter(piece -> piece instanceof King && piece.getColor() == currentlyPlaying)
+                .findFirst()
+                .orElse(null);
+
+        if (king == null) {
+            throw new IllegalStateException("No king found for the current player.");
+        }
+
+        // Check if the king's current tile is threatened
+        Tile kingTile = king.getHomeTile();
+        if (kingTile != null && !kingTile.isSafeToStepOn(currentlyPlaying)) {
+            // Check movements available to the king
+            Map<SpecTileFunc, List<Tile>> potentialMoves = king.getImportantTiles();
+            boolean hasSafeMove = potentialMoves.get(SpecTileFunc.AVAILABLE_TILE) != null
+                                || potentialMoves.get(SpecTileFunc.ENEMY_TILE)!= null;
+            // If no safe moves are available, declare a checkmate
+            if (!hasSafeMove) {
+                gameLost();
+            }
+        }
     }
 
     private void checkStalemate() {
