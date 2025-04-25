@@ -130,7 +130,7 @@ public class Tile {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (chessPiece != null) {
-                    GameOperator.getInstance().interactiveTileClicked(selfRefference);
+                    GameOperator.getGameOperatorInstance().interactiveTileClicked(selfRefference);
                 }
             }
         };
@@ -138,7 +138,7 @@ public class Tile {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (chessPiece == null) {
-                    GameOperator.getInstance().passiveTileClicked();
+                    GameOperator.getGameOperatorInstance().passiveTileClicked();
                 }
             }
         };

@@ -24,7 +24,7 @@ public class GameScreenFactory {
     // NOTE: Garbage collection is intentionally not handled manually in this class.
 
     // Singleton instance of GameScreenFactory to ensure only one instance exists at runtime.
-    private static GameScreenFactory instance;
+    private static GameScreenFactory gameScreenFactoryInstance;
 
     // Core variables for managing panel dimensions and chessboard settings.
     private static final int MAIN_PANEL_WIDTH = 1200;
@@ -49,7 +49,6 @@ public class GameScreenFactory {
     private final Player black;
     private final MainWindowFrame mainWindowFrame;
     private MouseMotionAdapter outOfBoundsListener;
-    private final GameOperator gameOperator;
 
     // static reference to basic WindowPanels
     private JLabel player1Panel;
@@ -57,32 +56,18 @@ public class GameScreenFactory {
     private JPanel chessboardPanel;
     private JPanel mainPanel;
 
-    private GameScreenFactory() {
+    public GameScreenFactory(GameInstance gameInstance, MainWindowFrame mainWindowFrame) {
         // Initialize core fields by retrieving the current game state and necessary objects.
-        this.gameOperator = GameOperator.getInstance();
-        this.chessboard = gameOperator.getGameInstance().getChessboard();
-        this.white = gameOperator.getGameInstance().getPlayerObject(ChessPieceColors.WHITE);
-        this.black = gameOperator.getGameInstance().getPlayerObject(ChessPieceColors.BLACK);
-        this.mainWindowFrame = gameOperator.getMainWindowFrame();
+        this.chessboard = gameInstance.getChessboard();
+        this.white = gameInstance.getPlayerObject(ChessPieceColors.WHITE);
+        this.black = gameInstance.getPlayerObject(ChessPieceColors.BLACK);
+        this.mainWindowFrame = mainWindowFrame;
         // setUpOutOfBoundsListener();
 
         // Clear the contents of the main game window before reconfiguring its layout.
         mainWindowFrame.getContentPane().removeAll();
         // Initialize the main panel structure and associated components.
         createMainPanelStructure();
-    }
-
-    /**
-     * Retrieves the singleton instance of GameScreenFactory.
-     * If it doesn't exist, creates a new instance.
-     *
-     * @return the singleton GameScreenFactory instance.
-     */
-    public static GameScreenFactory getInstance() {
-        if (instance == null) {
-            instance = new GameScreenFactory();
-        }
-        return instance;
     }
 
     /**

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Chessboard {
     private Tile[][] playingField;
     /** reference to every piece that's on Tile[][] playingField */
-    private ArrayList<ChessPiece> ammountOfMaterial = new ArrayList<>();
+    private final ArrayList<ChessPiece> amountOfMaterial = new ArrayList<>();
 
     public Chessboard(int tileSizeInPixels) {
         buildChessboard(tileSizeInPixels);
@@ -21,8 +21,10 @@ public class Chessboard {
 
     /** get Tile from corresponding X, Y */
     public Tile getTile(int row, int column) {
-        return playingField[row][column];
-
+        if(row>=0 && row<8 && column>=0 && column<8){
+            return playingField[row][column];
+        }
+        return null;
     }
 
     /** reset the button to deafult color*/
@@ -35,11 +37,11 @@ public class Chessboard {
     }
 
     public ArrayList<ChessPiece> getAmountOfMaterial() {
-        return ammountOfMaterial;
+        return amountOfMaterial;
     }
 
     public ChessPiece removePieceFromMaterial(ChessPiece chessPiece) {
-        ammountOfMaterial.remove(chessPiece);
+        amountOfMaterial.remove(chessPiece);
         return chessPiece;
     }
 
@@ -58,7 +60,7 @@ public class Chessboard {
             }
         }
         setUpChessPieces(); // Initializes the board with the default chess setup.
-        //piecesLookAround();
+        piecesLookAround();
     }
 
     private void setUpChessPieces() {
@@ -71,9 +73,11 @@ public class Chessboard {
     }
 
     private void piecesLookAround() {
-        for (ChessPiece piece : ammountOfMaterial) {
-            piece.lookAround();
-            piece.updateTileObservers();
+        for (ChessPiece piece : amountOfMaterial) {
+            if (piece.getClass() != King.class) {
+                piece.lookAround();
+                piece.updateTileObservers();
+            }
         }
     }
 
@@ -84,8 +88,8 @@ public class Chessboard {
             Pawn blackPawn = new Pawn(ChessPieceColors.BLACK, this);
             playingField[i][6].setPiece(whitePawn);
             playingField[i][1].setPiece(blackPawn);
-            ammountOfMaterial.add(whitePawn);
-            ammountOfMaterial.add(blackPawn);
+            amountOfMaterial.add(whitePawn);
+            amountOfMaterial.add(blackPawn);
         }
     }
 
@@ -98,10 +102,10 @@ public class Chessboard {
         playingField[7][0].setPiece(blackRook2);
         playingField[0][7].setPiece(whiteRook1);
         playingField[7][7].setPiece(whiteRook2);
-        ammountOfMaterial.add(blackRook1);
-        ammountOfMaterial.add(blackRook2);
-        ammountOfMaterial.add(whiteRook1);
-        ammountOfMaterial.add(whiteRook2);
+        amountOfMaterial.add(blackRook1);
+        amountOfMaterial.add(blackRook2);
+        amountOfMaterial.add(whiteRook1);
+        amountOfMaterial.add(whiteRook2);
     }
 
     private void setKnights() {
@@ -113,10 +117,10 @@ public class Chessboard {
         playingField[6][0].setPiece(blackKnight2);
         playingField[1][7].setPiece(whiteKnight1);
         playingField[6][7].setPiece(whiteKnight2);
-        ammountOfMaterial.add(blackKnight1);
-        ammountOfMaterial.add(blackKnight2);
-        ammountOfMaterial.add(whiteKnight1);
-        ammountOfMaterial.add(whiteKnight2);
+        amountOfMaterial.add(blackKnight1);
+        amountOfMaterial.add(blackKnight2);
+        amountOfMaterial.add(whiteKnight1);
+        amountOfMaterial.add(whiteKnight2);
     }
 
     private void setBishops() {
@@ -128,10 +132,10 @@ public class Chessboard {
         playingField[5][0].setPiece(blackBishop2);
         playingField[2][7].setPiece(whiteBishop1);
         playingField[5][7].setPiece(whiteBishop2);
-        ammountOfMaterial.add(blackBishop1);
-        ammountOfMaterial.add(blackBishop2);
-        ammountOfMaterial.add(whiteBishop1);
-        ammountOfMaterial.add(whiteBishop2);
+        amountOfMaterial.add(blackBishop1);
+        amountOfMaterial.add(blackBishop2);
+        amountOfMaterial.add(whiteBishop1);
+        amountOfMaterial.add(whiteBishop2);
     }
 
     private void setQueens() {
@@ -139,8 +143,8 @@ public class Chessboard {
         Queen whiteQueen = new Queen(ChessPieceColors.WHITE, this);
         playingField[3][0].setPiece(blackQueen);
         playingField[3][7].setPiece(whiteQueen);
-        ammountOfMaterial.add(blackQueen);
-        ammountOfMaterial.add(whiteQueen);
+        amountOfMaterial.add(blackQueen);
+        amountOfMaterial.add(whiteQueen);
     }
 
     private void setKings() {
@@ -148,8 +152,8 @@ public class Chessboard {
         King whiteKing = new King(ChessPieceColors.WHITE, this);
         playingField[4][0].setPiece(blackKing);
         playingField[4][7].setPiece(whiteKing);
-        ammountOfMaterial.add(blackKing);
-        ammountOfMaterial.add(whiteKing);
+        amountOfMaterial.add(blackKing);
+        amountOfMaterial.add(whiteKing);
     }
 
 }

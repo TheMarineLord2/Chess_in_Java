@@ -19,7 +19,7 @@ import java.util.Map;
 public class GameOperator {
 
     // Singleton instance of the GameOperator class
-    private static GameOperator instance;
+    private static GameOperator gameOperatorInstance = null;
 
     // Factory for creating and controlling game screen visuals
     private GameScreenFactory gameScreenFactory;
@@ -43,18 +43,12 @@ public class GameOperator {
     private Map<SpecTileFunc, List<Tile>> importantTiles = null;
 
     /** Private constructor for the singleton design pattern. */
-    private GameOperator() {
-        mainOperator = MainOperator.getInstance();
+    public GameOperator(MainOperator caller) {
+        gameOperatorInstance = this;
+        mainOperator = caller;
         this.mainWindowFrame = mainOperator.getMainWindowFrame();
-        CreateGame(mainOperator.getPlayer1(), mainOperator.getPlayer2());
-    }
 
-    /**@return Returns the only instance of GameOperator allowed in this program cycle. */
-    public static GameOperator getInstance() {
-        if (instance == null) {
-            instance = new GameOperator();
-        }
-        return instance;
+        CreateGame(mainOperator.getPlayer1(), mainOperator.getPlayer2());
     }
 
     public GameInstance getGameInstance(){
@@ -62,6 +56,13 @@ public class GameOperator {
     }
     public MainWindowFrame getMainWindowFrame(){
         return mainWindowFrame;
+    }
+
+    public static GameOperator getGameOperatorInstance() {
+        if (gameOperatorInstance == null) {
+            throw new IllegalStateException("GameOperator instance is null. Cannot access it.");
+        }
+        return gameOperatorInstance;
     }
 
     /** Handles 4 situations. Those will be proteced in another way too
@@ -235,7 +236,7 @@ public class GameOperator {
      */
     private void CreateGame(Player white, Player black) {
         gameInstance = new GameInstance(white, black, GameScreenFactory.getTileSize());
-        gameScreenFactory = GameScreenFactory.getInstance();
+        gameScreenFactory = new GameScreenFactory(gameInstance, mainWindowFrame);
 
         // Retrieve the chessboard instance from the game instance
         chessboard = gameInstance.getChessboard();

@@ -14,7 +14,6 @@ public class MainOperator {
     private static MainOperator instance;
     private MainWindowFrame windowFrame = MainWindowFrame.getInstance();
     private TitleScreenFactory titleScreenFactory = TitleScreenFactory.getInstance();
-    private GameOperator gameOperator;
     private Player player1;
     private Player player2;
 
@@ -47,7 +46,10 @@ public class MainOperator {
                     player2Name != null && !player2Name.isEmpty()) {
                 player1 = new Player(player1Name);
                 player2 = new Player(player2Name);
-                gameOperator = GameOperator.getInstance();
+                System.out.println("Creating new game instance...");
+                System.out.println("White player: " + player1.getName());
+                System.out.println("Black player: " + player2.getName());
+                new GameOperator(this);
             } else {
                 // Instead we should change title screan parameters
                 JOptionPane.showMessageDialog(windowFrame,
@@ -61,9 +63,7 @@ public class MainOperator {
     public Player getPlayer1(){
         return player1;
     }
-    public Player getPlayer2() {
-        return player2;
-    }
+    public Player getPlayer2() { return player2; }
     public MainWindowFrame getMainWindowFrame(){
         return windowFrame;
     }

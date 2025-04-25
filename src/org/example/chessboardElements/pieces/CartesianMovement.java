@@ -146,6 +146,7 @@ public interface CartesianMovement {
 
     /** to matrix specialTiles add second tile in a rook direction if king && rook not moved */
     private void getTilesForCastling(ChessPieceColors alliedColor, Point homeCoords, Chessboard chessboard, Map<SpecTileFunc, List<Tile>> importantTiles) {
+        System.out.println("King tile: " + homeCoords.x + " " + homeCoords.y);
         List<Tile> specialTiles = importantTiles.get(SpecTileFunc.SPECIAL_MOVE);
         Tile kingTile = chessboard.getTile(homeCoords.x, homeCoords.y);
         ChessPiece piece = chessboard.getTile(homeCoords.x, homeCoords.y).getPiece();
