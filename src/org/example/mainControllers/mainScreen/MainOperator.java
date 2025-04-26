@@ -49,7 +49,8 @@ public class MainOperator {
                 System.out.println("Creating new game instance...");
                 System.out.println("White player: " + player1.getName());
                 System.out.println("Black player: " + player2.getName());
-                new GameOperator(this);
+                Thread gameThread = new Thread (new GameOperator(this));
+                gameThread.start();
             } else {
                 // Instead we should change title screan parameters
                 JOptionPane.showMessageDialog(windowFrame,

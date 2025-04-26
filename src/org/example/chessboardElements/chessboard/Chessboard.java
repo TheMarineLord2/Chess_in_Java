@@ -39,9 +39,15 @@ public class Chessboard {
     public ArrayList<ChessPiece> getAmountOfMaterial() {
         return amountOfMaterial;
     }
-
+ 
+    /** NOT CHECKING insufficient material for:
+     * oddball positions, usually with locked pawns, where no checkmate is possible (this varies with different chess organizations)
+     * @param chessPiece
+     * @return
+     */
     public ChessPiece removePieceFromMaterial(ChessPiece chessPiece) {
         amountOfMaterial.remove(chessPiece);
+        isInsufficientMaterial();
         return chessPiece;
     }
 
@@ -156,4 +162,53 @@ public class Chessboard {
         amountOfMaterial.add(whiteKing);
     }
 
+    public boolean isInsufficientMaterial() {
+        int whiteBishops = 0, blackBishops = 0;
+        int whiteKnights = 0, blackKnights = 0;
+        boolean whiteLightSquareBishop = false, whiteDarkSquareBishop = false;
+        boolean blackLightSquareBishop = false, blackDarkSquareBishop = false;
+
+        for (ChessPiece piece : amountOfMaterial) {
+            // if there are ANY pieces like 3 below. material is always* sufficient.
+            // Good practice would be to not call them by type, but create chess piece classes enum
+            if (piece.getClass() == Pawn.class || piece.getClass() == Queen.class || piece.getClass() == Rook.class) {
+                return false;
+            } else {
+                if (piece.getClass() == Knight.class) {
+                    // summing knights
+                    if (piece.getColor() == ChessPieceColors.WHITE) whiteKnights++;
+                    else blackKnights++;
+                } else if (piece.getClass() == Bishop.class) {
+                    if (piece.getColor() == ChessPieceColors.WHITE) {
+                        if (piece.getHomeTile().getOriginalColor() == ChessPieceColors.WHITE) {
+                            whiteLightSquareBishop = true;
+                        } else {
+                            whiteDarkSquareBishop = true;
+                        }
+                        whiteBishops++;
+                    } else {
+                        if (piece.getHomeTile().getOriginalColor() == ChessPieceColors.WHITE) {
+                            blackLightSquareBishop = true;
+                        } else {
+                            blackDarkSquareBishop = true;
+                        }
+                        blackBishops++;
+                    }
+                }
+            }
+        }
+        boolean noSufficientWhiteMaterial = (
+                (whiteKnights == 0 && whiteBishops == 0) || /* no material */
+                        (whiteKnights == 1 && whiteBishops == 0) || /* 1 knight */
+                        (whiteKnights == 0 && whiteBishops == 1) || /* 1 bishop */
+                        (whiteBishops == 2 && !(whiteDarkSquareBishop && whiteLightSquareBishop))
+        );
+        boolean noSufficientBlackMaterial = (
+                (blackKnights == 0 && blackBishops == 0) ||
+                        (blackKnights == 1 && blackBishops == 0) ||
+                        (blackKnights == 0 && blackBishops == 1) ||
+                        (blackBishops == 0 && !(blackLightSquareBishop && blackDarkSquareBishop))
+        );
+        return noSufficientBlackMaterial && noSufficientWhiteMaterial;
+    }
 }

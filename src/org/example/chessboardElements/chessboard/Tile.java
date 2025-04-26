@@ -87,6 +87,9 @@ public class Tile {
     public int getX() {
         return column;
     }
+    public ChessPieceColors getOriginalColor() {
+        return tileColor;
+    }
 
     /** If chess piece = null - remove icon from button.
      * Else change icon to inhabitant of tile

@@ -16,30 +16,14 @@ import java.util.Map;
  * The GameOperator class handles the main logic and control flow of the chess game.
  * This includes managing the game state, piece selection, and user interactions with the chessboard.
  */
-public class GameOperator {
-
-    // Singleton instance of the GameOperator class
+public class GameOperator implements Runnable {
     private static GameOperator gameOperatorInstance = null;
-
-    // Factory for creating and controlling game screen visuals
     private GameScreenFactory gameScreenFactory;
-
-    // Current instance containing the chess game's state
     private GameInstance gameInstance;
-
-    // Reference to the main application window frame
     private final MainWindowFrame mainWindowFrame;
-
-    // Main operator managing the entire application logic
     private final MainOperator mainOperator;
-
-    // Field to track the currently selected chess piece
     private ChessPiece selectedPiece = null;
-
-    // Reference to the game's chessboard object
     private Chessboard chessboard = null;
-
-    // Map of important tiles based on special moves or interactions
     private Map<SpecTileFunc, List<Tile>> importantTiles = null;
 
     /** Private constructor for the singleton design pattern. */
@@ -47,10 +31,12 @@ public class GameOperator {
         gameOperatorInstance = this;
         mainOperator = caller;
         this.mainWindowFrame = mainOperator.getMainWindowFrame();
-
-        CreateGame(mainOperator.getPlayer1(), mainOperator.getPlayer2());
     }
-
+    @Override
+    public void run() {
+        CreateGame(mainOperator.getPlayer1(), mainOperator.getPlayer2());
+        while(gameInstance.isGameOver()) { gameInstance.takeATurn();}
+    }
     public GameInstance getGameInstance(){
         return gameInstance;
     }
@@ -69,7 +55,6 @@ public class GameOperator {
      *
      * 1. Clicks a tile without a piece in hand.
      * 2. Then get piece and check if piece is already got (not null)
-     *
      * 3. piece in hand and clicked tile
      * 4. check if it is important one
      *
@@ -225,8 +210,6 @@ public class GameOperator {
         }
         return null; // Return null if no match is found
     }
-
-    //private methods
 
     /**
      * Creates a new game instance and sets up the chessboard, players, and visuals.
