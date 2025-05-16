@@ -1,4 +1,4 @@
-package org.example.chessboardElements;
+package org.example.objectsAndElements;
 
 import java.awt.*;
 //import java.security.PublicKey;

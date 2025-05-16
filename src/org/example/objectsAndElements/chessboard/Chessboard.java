@@ -1,10 +1,11 @@
-package org.example.chessboardElements.chessboard;
+package org.example.objectsAndElements.chessboard;
 
-import org.example.chessboardElements.ChessPieceColors;
-import org.example.chessboardElements.pieces.ChessPiece;
-import org.example.chessboardElements.pieces.pieceType.*;
+import org.example.objectsAndElements.ChessPieceColors;
+import org.example.objectsAndElements.pieces.ChessPiece;
+import org.example.objectsAndElements.pieces.pieceType.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Chessboard {
     private Tile[][] playingField;
@@ -15,14 +16,24 @@ public class Chessboard {
         buildChessboard(tileSizeInPixels);
     }
 
+    public void print(){
+        for(int i = 0; i<8; i++){
+            for(int j = 0; j<8; j++){
+                playingField[j][i].print();
+            }
+            System.out.println();
+        }
+
+    }
     public Tile[][] getPlayingField() {
         return playingField;
     }
 
     /** get Tile from corresponding X, Y */
-    public Tile getTile(int row, int column) {
-        if(row>=0 && row<8 && column>=0 && column<8){
-            return playingField[row][column];
+    public Tile getTile(int xValue, int yValue) {
+        if(xValue >=0 && xValue <= 7 && yValue >= 0 && yValue<= 7){
+            //System.out.println("return playingField["+xValue+"]["+yValue+"];");
+            return playingField[xValue][yValue];
         }
         return null;
     }
@@ -39,12 +50,7 @@ public class Chessboard {
     public ArrayList<ChessPiece> getAmountOfMaterial() {
         return amountOfMaterial;
     }
- 
-    /** NOT CHECKING insufficient material for:
-     * oddball positions, usually with locked pawns, where no checkmate is possible (this varies with different chess organizations)
-     * @param chessPiece
-     * @return
-     */
+
     public ChessPiece removePieceFromMaterial(ChessPiece chessPiece) {
         amountOfMaterial.remove(chessPiece);
         isInsufficientMaterial();
@@ -82,6 +88,7 @@ public class Chessboard {
         for (ChessPiece piece : amountOfMaterial) {
             if (piece.getClass() != King.class) {
                 piece.lookAround();
+                //System.out.println("Looked around " + piece.getClass().getSimpleName() + " " + piece.getColor());
                 piece.updateTileObservers();
             }
         }
@@ -210,5 +217,25 @@ public class Chessboard {
                         (blackBishops == 0 && !(blackLightSquareBishop && blackDarkSquareBishop))
         );
         return noSufficientBlackMaterial && noSufficientWhiteMaterial;
+    }
+    /** Returns a list of tiles in a straight line (horizontal, vertical, or diagonal) between two tiles */
+    public List<Tile> tilesInStraightLine(Tile start, Tile end)
+    {
+        List<Tile> tiles = new ArrayList<>();
+        int diffX = Integer.compare(end.getX(), start.getX()); // Direction along the X-axis
+        int diffY = Integer.compare(end.getY(), start.getY()); // Direction along the Y-axis
+
+        if(diffX == 0 || diffY == 0 || Math.abs(diffX) == Math.abs(diffY) )
+        {
+            int x = start.getX() + diffX;
+            int y = start.getY() + diffY;
+
+            while (x != end.getX() || y != end.getY()) {
+                tiles.add(playingField[x][y]);
+                x += diffX;
+                y += diffY;
+            }
+        }
+        return tiles;
     }
 }

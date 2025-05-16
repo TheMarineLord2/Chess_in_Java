@@ -1,4 +1,4 @@
-package org.example.chessboardElements;
+package org.example.objectsAndElements;
 
 import java.awt.*;
 
@@ -7,11 +7,6 @@ public enum SpecTileFunc {
      * Light blue color to represent available tiles for movement.
      */
     AVAILABLE_TILE(new Color(29, 178, 245)),
-
-    /**
-     * Green color to represent occupied tiles (friendly pieces).
-     */
-    HOME_TILE(new Color(117, 255, 26)),
 
     /**
      * Red color to indicate enemy pieces that can be captured.

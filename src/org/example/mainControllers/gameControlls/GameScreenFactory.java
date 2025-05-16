@@ -1,9 +1,9 @@
 package org.example.mainControllers.gameControlls;
 
-import org.example.chessboardElements.ChessPieceColors;
-import org.example.chessboardElements.SpecTileFunc;
-import org.example.chessboardElements.chessboard.Chessboard;
-import org.example.chessboardElements.chessboard.Tile;
+import org.example.objectsAndElements.ChessPieceColors;
+import org.example.objectsAndElements.SpecTileFunc;
+import org.example.objectsAndElements.chessboard.Chessboard;
+import org.example.objectsAndElements.chessboard.Tile;
 import org.example.mainControllers.mainScreen.MainWindowFrame;
 
 import javax.swing.*;
@@ -107,9 +107,7 @@ public class GameScreenFactory {
         mainPanel.add(chessboardPanel);
     }
 
-    /**
-     * Creates and configures the player panels for both players, displaying their names.
-     */
+    /** Creates and configures the player panels for both players, displaying their names.*/
     private void createPlayerPanels() {
         // Create player profile labels
         player1Panel = new JLabel(white.getName());
@@ -121,16 +119,10 @@ public class GameScreenFactory {
         mainPanel.add(player2Panel);
     }
 
-    // Public methods to interact with the game screen.
     public static int getTileSize(){
         return TILE_SIZE;
     }
 
-    /**
-     * Updates the mouse cursor to display a custom image.
-     *
-     * @param image BufferedImage to use as the cursor.
-     */
     public void setImageAsCursor(BufferedImage image) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
@@ -141,17 +133,13 @@ public class GameScreenFactory {
     }
     // Private helper methods for initializing and updating components.
 
-    /**
-     * Configures the chessboard panel by adding tiles and displaying chess pieces.
-     */
+    /** Configures the chessboard panel by adding tiles and displaying chess pieces.*/
     private void setUpChessboardPanel() {
         setChessboardTiles(); // Adds tile buttons to the chessboard.
         showChessPieces(); // Displays chess pieces on their respective tiles.
     }
 
-    /**
-     * Adds all tiles from the chessboard model to the chessboard panel.
-     */
+    /** Adds all tiles from the chessboard model to the chessboard panel.*/
     private void setChessboardTiles() {
         Tile[][] tiles = chessboard.getPlayingField();
         for (int i = 0; i < 8; i++) {
@@ -161,9 +149,7 @@ public class GameScreenFactory {
         }
     }
 
-    /**
-     * Loops through all the chessboard tiles and displays their corresponding chess pieces.
-     */
+    /** Loops through all the chessboard tiles and displays their corresponding chess pieces. */
     private void showChessPieces() {
         Tile[][] tiles = chessboard.getPlayingField();
         for (int i = 0; i < 8; i++) {
@@ -196,9 +182,7 @@ public class GameScreenFactory {
         };
     }
 
-    /**
-     * Resets all tile colors on the chessboard to their default state.
-     */
+    /** Resets all tile colors on the chessboard to their default state. */
     public void resetChessboardColors() {
         chessboard.resetButtonColors();
         mainWindowFrame.repaint();
@@ -214,12 +198,20 @@ public class GameScreenFactory {
         }
         mainWindowFrame.repaint();
     }
-    public void resetColors(Map<SpecTileFunc, List<Tile>> importantTiles){
-        for (Map.Entry<SpecTileFunc, List<Tile>> entry : importantTiles.entrySet()) {
-            for (Tile tile : entry.getValue()) {
-                tile.resetButtonColor();
-            }
-        }
+    public void resetColors(){
+        chessboard.resetButtonColors();
         mainWindowFrame.repaint();
+        //cursor do domyślnego
+    }
+
+    public void showEndgameMessage(String message)
+    {
+        JOptionPane.showMessageDialog(mainWindowFrame,message, "Game Over", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void resetToDefaultCursor() {
+        Cursor defaultCursor = Cursor.getDefaultCursor();
+        mainWindowFrame.setCursor(defaultCursor);
+        mainWindowFrame.revalidate();
     }
 }

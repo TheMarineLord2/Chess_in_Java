@@ -2,13 +2,8 @@ package org.example.mainControllers.mainScreen;
 
 import javax.swing.*;
 
-public class MainWindowFrame extends JFrame {
-    // private List<JPanel> panelBuffor;
+public class MainWindowFrame extends JFrame{
     private static MainWindowFrame instance;
-    
-    // Set a GridLayout with one row and one column to ensure 
-    // that any added JPanel will always expand to fill the window, 
-    // regardless of the JFrame's size or content changes.
 
     // Constants for dimension management
     private static final int MAIN_FRAME_WIDTH = 1200;

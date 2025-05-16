@@ -1,6 +1,6 @@
 package org.example.mainControllers.gameControlls;
 
-import org.example.chessboardElements.pieces.ChessPiece;
+import org.example.objectsAndElements.pieces.ChessPiece;
 
 import java.util.ArrayList;
 

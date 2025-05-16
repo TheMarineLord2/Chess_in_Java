@@ -1,21 +1,18 @@
 package org.example.mainControllers.gameControlls;
 
-import org.example.chessboardElements.SpecTileFunc;
-import org.example.chessboardElements.chessboard.Chessboard;
-import org.example.chessboardElements.chessboard.Tile;
-import org.example.chessboardElements.pieces.ChessPiece;
-import org.example.chessboardElements.pieces.pieceType.King;
-import org.example.chessboardElements.pieces.pieceType.Pawn;
+import org.example.objectsAndElements.SpecTileFunc;
+import org.example.objectsAndElements.chessboard.Chessboard;
+import org.example.objectsAndElements.chessboard.Tile;
+import org.example.objectsAndElements.pieces.ChessPiece;
+import org.example.objectsAndElements.pieces.pieceType.King;
+import org.example.objectsAndElements.pieces.pieceType.Pawn;
 import org.example.mainControllers.mainScreen.MainOperator;
 import org.example.mainControllers.mainScreen.MainWindowFrame;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * The GameOperator class handles the main logic and control flow of the chess game.
- * This includes managing the game state, piece selection, and user interactions with the chessboard.
- */
+
 public class GameOperator implements Runnable {
     private static GameOperator gameOperatorInstance = null;
     private GameScreenFactory gameScreenFactory;
@@ -26,183 +23,206 @@ public class GameOperator implements Runnable {
     private Chessboard chessboard = null;
     private Map<SpecTileFunc, List<Tile>> importantTiles = null;
 
-    /** Private constructor for the singleton design pattern. */
-    public GameOperator(MainOperator caller) {
+
+    public GameOperator(MainOperator caller, Player player1, Player player2)
+    {
         gameOperatorInstance = this;
         mainOperator = caller;
         this.mainWindowFrame = mainOperator.getMainWindowFrame();
+        gameInstance = new GameInstance(player1, player2, GameScreenFactory.getTileSize());
     }
-    @Override
-    public void run() {
-        CreateGame(mainOperator.getPlayer1(), mainOperator.getPlayer2());
-        while(gameInstance.isGameOver()) { gameInstance.takeATurn();}
-    }
-    public GameInstance getGameInstance(){
+
+    public GameInstance getGameInstance()
+    {
         return gameInstance;
     }
-    public MainWindowFrame getMainWindowFrame(){
+    public MainWindowFrame getMainWindowFrame()
+    {
         return mainWindowFrame;
     }
 
-    public static GameOperator getGameOperatorInstance() {
-        if (gameOperatorInstance == null) {
+    public static GameOperator getGameOperatorInstance()
+    {
+        if (gameOperatorInstance == null)
+        {
             throw new IllegalStateException("GameOperator instance is null. Cannot access it.");
         }
         return gameOperatorInstance;
     }
 
-    /** Handles 4 situations. Those will be proteced in another way too
-     *
-     * 1. Clicks a tile without a piece in hand.
-     * 2. Then get piece and check if piece is already got (not null)
-     * 3. piece in hand and clicked tile
-     * 4. check if it is important one
-     *
-     * @param tile object by which this method was called.
-     */
-    public void interactiveTileClicked(Tile tile) {
-        try {
-            if (selectedPiece == null) {
+    @Override
+    public void run(){
+        gameScreenFactory = new GameScreenFactory(gameInstance, mainWindowFrame);
+        chessboard = gameInstance.getChessboard();
+    }
+
+
+    public void tileClicked(Tile tile) {
+        try
+        {
+            if (selectedPiece == null)
+            {
+                // if no piece in hand
                 selectedPiece = tile.getPiece();
-                
-                if (selectedPiece != null) {
-                    // make sure that King moves are up to date
-                    if (selectedPiece.getClass() == King.class) {
-                        for (ChessPiece piece : chessboard.getAmountOfMaterial()) {
-                            if (piece.getColor() == selectedPiece.getColor() && piece instanceof King ) {
-                                piece.lookAround();
-                                break;
-                            }
-                        }
-                    }
+                if (selectedPiece != null && selectedPiece.hasAvailableMoves() && selectedPiece.getColor() == gameInstance.getCurrentPlayerColor() )
+                {
+                    // and if picked up the piece of current's player color
                     // Set the piece visuals as the cursor representation
                     gameScreenFactory.setImageAsCursor(selectedPiece.getChessPieceVisuals());
                     // Show possible moves for the selected piece
                     importantTiles = selectedPiece.getImportantTiles();
                     gameScreenFactory.paintSpecialTiles(importantTiles);
                 }
-            } else {
-                SpecTileFunc color = checkSpecTileFunc(tile);
-                if(color != null && color != SpecTileFunc.POTENTIALLY_OBSERVED){
-                    movePiece(tile, color);
-                }
-                else {
-                    dropPiece();
+                else
+                {
+                    selectedPiece = null;
                 }
             }
-        } catch (Exception e) {
+            else
+            {
+                // if there's a piece in hand
+                if (importantTiles != null)
+                {
+
+                    switch (checkSpecTileFunc(tile))
+                    {
+                        case AVAILABLE_TILE -> {
+                            moveToTile(tile);
+                            gameInstance.takeATurn();
+                        }
+                        case ENEMY_TILE -> {
+                            captureTile(tile);
+                            gameInstance.takeATurn();
+                        }
+                        case SPECIAL_MOVE -> {
+                            specialMove(tile);
+                            gameInstance.takeATurn();
+                        }
+                        case null -> dropPiece();
+                        default -> dropPiece();
+                    }
+                    gameScreenFactory.resetColors();
+                }
+            }
+        }
+        catch (Exception e)
+        {
             System.out.println("An error occurred: " + e.getMessage());
         }
+        System.out.println("pong! - " + selectedPiece);
     }
 
-    public void passiveTileClicked() {
-        if(selectedPiece!=null){
-            dropPiece();
+
+    private void moveToTile(Tile tile)
+    {
+        if (tile.getPiece() != null)
+        {
+            captureTile(tile);
+        }
+        else
+        {
+            takeSelectedPieceFromItsHomeTile();
+            putSelectedPieceOnTargetTile(tile);
         }
     }
 
-    public void rightMouseClicked(){
-        dropPiece();
-    }
-
-    private void movePiece(Tile tile, SpecTileFunc color) {
-        switch (color) {
-            case ENEMY_TILE:
-                captureTile(tile);
-                // end turn
-                break;
-            case AVAILABLE_TILE:
-                moveToTile(tile);
-                // end turn
-                break;
-            case SPECIAL_MOVE:
-                specialMove(tile);
-                // end turn
-                break;
-            default:
-                dropPiece();
-                break;
-        }
-        // Reset important tiles and repaint the board after the move
-        dropPiece();
-        gameScreenFactory.resetColors(importantTiles);
-    }
-
-    /** Checks last time if time is empty.
-     * Removes piece.homeTile.piece reference to null.
-     * Refreshes chess icon. Removes tile.piece from tile.piece.homeTile observers
-     * tile.setPiece(selectedPiece)
-     * Refresh all observers
-     * Set verified icon on that tile */
-    private void moveToTile(Tile tile) {
-        if(tile.getPiece() != null){ captureTile(tile); }// safely remove the piece from tile.
-        else{
-
-            Tile homeTile = takeSelectedPieceFromItsHomeTile();
-            // set piece to new tile and set home tile
-            tile.setPiece(selectedPiece);
-            selectedPiece.lookAround();
-            tile.refreshChessPieceIcon();
-            updateObserversAfterAMove(homeTile);
-        }
-    }
-
-    /** remove a specific tile from piece references, observers and other tiles.
-     * Refresh icon updates. 
-     * @return tileOfOrigin*/
-    private Tile takeSelectedPieceFromItsHomeTile() {
+    private void takeSelectedPieceFromItsHomeTile()
+    {
         Tile homeTile = selectedPiece.getHomeTile();
+
         homeTile.setPiece(null);
         homeTile.refreshChessPieceIcon();
+
         selectedPiece.stopObservingImportantTiles();
-        return homeTile;
+        updateObserversOfATile(homeTile);
     }
 
-    private void specialMove(Tile tile) {
-        if(selectedPiece.getClass()== King.class){
-            // get ammount of moves made by King.
+    private void putSelectedPieceOnTargetTile(Tile tile){
+        tile.setPiece(selectedPiece);
+        tile.refreshChessPieceIcon();
+
+        selectedPiece.lookAround();
+        updateObserversOfATile(tile);
+
+        selectedPiece = null;
+        gameScreenFactory.resetToDefaultCursor();
+
+        gameScreenFactory.resetColors();
+    }
+
+    private void specialMove(Tile tile)
+    {
+        if (selectedPiece.getClass()== King.class)
+        {
+            // get amount of moves made by King.
             // if == 0.
             // check if rook has 0
             // 3 variants of castling.
             // 2 tiles "up"
             // 2 tiles "left"
             // 2 tiles "right"
-        } else if(selectedPiece.getClass() == Pawn.class){
+
+        }
+        else if (selectedPiece.getClass() == Pawn.class)
+        {
             // if row is the "last" row
             // promote
             // en passant is attack tile
+
         }
     }
 
-    private void captureTile(Tile tile) {
-        if(tile.getPiece() != null && tile.getPiece().getColor() != selectedPiece.getColor()){
-            Tile tileOfOrigin = takeSelectedPieceFromItsHomeTile();
+    private void captureTile(Tile tile)
+    {
+        if( tile.getPiece() != null && tile.getPiece().getColor() != selectedPiece.getColor() )
+        {
+            // if there is enemy piece on that tile
+            takeSelectedPieceFromItsHomeTile();
+
+            // Remove enemy piece
             ChessPiece capturedPiece = chessboard.removePieceFromMaterial(tile.getPiece());
             capturedPiece.stopObservingImportantTiles();
             gameInstance.getPlayerObject(capturedPiece.getColor()).addToGraveyard(capturedPiece);
-            updateObserversAfterAMove(tileOfOrigin);
-        }else{ throw IllegalArgumentException.class.cast("Trying to capture empty or an allied tile"); }
+
+            // Put new piece instead
+            putSelectedPieceOnTargetTile(tile);
+        }
+        else
+        {
+            throw IllegalArgumentException.class.cast("Trying to capture empty or an allied tile");
+        }
     }
 
-    private void updateObserversAfterAMove(Tile homeTile) {
-        for (ChessPiece observer : homeTile.getListOfObservers()) {
+    private void updateObserversOfATile(Tile homeTile)
+    {
+        for (ChessPiece observer : homeTile.getListOfObservers())
+        {
             observer.lookAround();
         }
     }
 
-    private void dropPiece() {
-        gameScreenFactory.resetColors(importantTiles);
+    private void dropPiece()
+    {
+        gameScreenFactory.resetColors();
 
         selectedPiece = null;
         importantTiles = null;
     }
-    
-    private SpecTileFunc checkSpecTileFunc(Tile tile) {
-        for (Map.Entry<SpecTileFunc, List<Tile>> entry : importantTiles.entrySet()) {
+
+    /** returns the key if tile exists in important tiles, or null if not */
+    private SpecTileFunc checkSpecTileFunc(Tile tile)
+    {
+        for (Map.Entry<SpecTileFunc, List<Tile>> entry : importantTiles.entrySet())
+        {
             List<Tile> tiles = entry.getValue(); // Extract the Tile[] array for the key
-            if (tiles != null) {
-                for (Tile t : tiles) { // Iterate through each Tile in the array
-                    if (t.equals(tile)) { // Check if the current Tile matches the given Tile
+            if (tiles != null)
+            {
+                for (Tile t : tiles)
+                {
+                    // Iterate through each Tile in the array
+                    if (t.equals(tile))
+                    {
+                        // Check if the current Tile matches the given Tile
                         return entry.getKey(); // Return the corresponding key
                     }
                 }
@@ -211,30 +231,9 @@ public class GameOperator implements Runnable {
         return null; // Return null if no match is found
     }
 
-    /**
-     * Creates a new game instance and sets up the chessboard, players, and visuals.
-     *
-     * @param white The Player object for the white pieces.
-     * @param black The Player object for the black pieces.
-     */
-    private void CreateGame(Player white, Player black) {
-        gameInstance = new GameInstance(white, black, GameScreenFactory.getTileSize());
-        gameScreenFactory = new GameScreenFactory(gameInstance, mainWindowFrame);
 
-        // Retrieve the chessboard instance from the game instance
-        chessboard = gameInstance.getChessboard();
+    public void showEndGameMessage(String message)
+    {
+        gameScreenFactory.showEndgameMessage(message);
     }
-
-    private void colorImportantTilesFor(ChessPiece chessPiece){
-        importantTiles = chessPiece.getImportantTiles();
-        for (Map.Entry<SpecTileFunc, List<Tile>> entry : importantTiles.entrySet()) {
-            SpecTileFunc color = entry.getKey();
-            List<Tile> tiles = entry.getValue();
-            for (Tile tile : tiles) {
-                tile.paintButton(color);
-            }
-        }
-    }
-
-
 }
