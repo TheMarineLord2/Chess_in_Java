@@ -59,12 +59,6 @@ public abstract class ChessPiece
         );
     }
 
-    protected void setImportantTiles(Map<SpecTileFunc, List<Tile>> tilesMap)
-    {
-        importantTiles = tilesMap;
-        
-    }
-    
     public void setHomeTileVariable(Tile homeTile)
     {
         this.homeTile = homeTile;
@@ -72,8 +66,13 @@ public abstract class ChessPiece
     }
 
     public abstract void lookAround();
-    
-    
+
+    public void incrementNumberOfMovesTaken()
+    {
+        numbersOfMovesTaken++;
+
+    }
+
     public void setInteractableIfPossibleMoves(boolean b)
     {
         if (b && (!importantTiles.get(SpecTileFunc.AVAILABLE_TILE).isEmpty() || // Check if there are tiles to move
@@ -138,7 +137,7 @@ public abstract class ChessPiece
     public int getMovesTaken()
     {
         return numbersOfMovesTaken;
-        
+
     }
 
     public boolean isPinnedTo(Tile tile)
@@ -166,6 +165,11 @@ public abstract class ChessPiece
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "{color=" + color + "}";
+
     }
 
+    public void removeFromMaterial()
+    {
+        chessboard.removePieceFromMaterial(this);
+    }
 }

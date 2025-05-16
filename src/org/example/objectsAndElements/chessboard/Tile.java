@@ -4,6 +4,7 @@ import org.example.objectsAndElements.ChessPieceColors;
 import org.example.objectsAndElements.SpecTileFunc;
 import org.example.objectsAndElements.pieces.ChessPiece;
 import org.example.objectsAndElements.pieces.pieceType.King;
+import org.example.objectsAndElements.pieces.pieceType.Pawn;
 import org.example.objectsAndElements.pieces.pieceType.Rook;
 import org.example.mainControllers.gameControlls.GameOperator;
 
@@ -28,8 +29,7 @@ public class Tile {
     private final List<ChessPiece> listOfObservers = new java.util.ArrayList<>();
     private final Tile selfReference;
     private final ChessPiece[] referenceCastling = new ChessPiece[2];
-
-    private ChessPiece referenceEnPAssant = null;
+    private Pawn referenceEnPassant = null;
     private boolean interactable = false;
 
 
@@ -42,7 +42,6 @@ public class Tile {
         setUpFieldButtonProperties(size);
         setUpFieldButtonListeners();
     }
-
 
     public void setPiece(ChessPiece chessPiece)
     {
@@ -61,7 +60,6 @@ public class Tile {
         }
     }
 
-
     public ChessPiece getPiece()
     {
         return chessPiece;
@@ -74,17 +72,18 @@ public class Tile {
 
     }
 
-    // Getter and setter for coordinates.
     public int getY()
     {
         return yValue;
 
     }
+
     public int getX()
     {
         return xValue;
 
     }
+
     public ChessPieceColors getOriginalColor()
     {
         return tileColor;
@@ -120,11 +119,11 @@ public class Tile {
     {
         if(interactable)
         {
-            System.out.print("["+xValue+"/"+yValue+":T]");
+            System.out.print("[:X]");
         }
         else
         {
-            System.out.print("["+xValue+"/"+yValue+":_]");
+            System.out.print("[:_]");
         }
     }
 
@@ -163,7 +162,6 @@ public class Tile {
 
     }
 
-
     public void removeObserver(ChessPiece chessPiece)
     {
         try
@@ -186,6 +184,7 @@ public class Tile {
         listOfObservers.add(chessPiece);
 
     }
+
     public List<ChessPiece> getListOfObservers()
     {
         return listOfObservers;
@@ -196,7 +195,7 @@ public class Tile {
     {
         for (ChessPiece observer : listOfObservers)
         {
-            if (observer.getColor() != alliedColor)
+            if (observer.getColor() != alliedColor && observer.getImportantTiles().get(SpecTileFunc.AVAILABLE_TILE).contains(this))
             {
                 return false;
             }
@@ -206,9 +205,13 @@ public class Tile {
     public void createCastlingOption(King king, Rook rook)
     {
         referenceCastling[0] = king;
-        referenceCastling[1]= rook;
+        referenceCastling[1] = rook;
+
     }
 
+    public Rook getRookForCastling(){
+        return (Rook) referenceCastling[1];
+    }
     public void removeCastlingOption(ChessPiece caller)
     {
         if (referenceCastling[0] != null)
@@ -225,5 +228,12 @@ public class Tile {
                 referenceCastling[0].getImportantTiles().get(SpecTileFunc.AVAILABLE_TILE).add(this);
             }
         }
+    }
+
+    public Pawn getReferenceEnPassant(){
+        return referenceEnPassant;
+    }
+    public void setReferenceEnPassant(Pawn pawn){
+        referenceEnPassant = pawn;
     }
 }

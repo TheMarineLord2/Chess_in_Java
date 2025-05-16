@@ -200,8 +200,8 @@ public interface CartesianMovement
                     if (rook.getHomeTile().getY() == homeCoords.y )
                     {
                         // if Y axis is the same
-                        // get tile 2x from King
-                        int xOffset = 2* Integer.signum(homeCoords.x - rook.getHomeTile().getX());
+                        // xOffset == 2 if rook to the right and -2 if rook to the left
+                        int xOffset = 2* Integer.signum(rook.getHomeTile().getX() - homeCoords.x);
                         Tile castlingTile = chessboard.getTile(xOffset + homeCoords.x, homeCoords.y);
                         specialTiles.add(castlingTile);
                         castlingTile.createCastlingOption((King) piece, (Rook) rook);
@@ -209,7 +209,7 @@ public interface CartesianMovement
                     else if (rook.getHomeTile().getX() == homeCoords.x)
                     {
                         // if X axis is the same
-                        // get tile 2x from King
+
                         int yOffset = 2 * Integer.signum(homeCoords.y - rook.getHomeTile().getY());
                         Tile castlingTile = chessboard.getTile(homeCoords.x, homeCoords.y + yOffset);
                         specialTiles.add(castlingTile);
@@ -226,8 +226,10 @@ public interface CartesianMovement
      * Check if there are diagonal foes
      * See if there are en passant ones
      * If available is in last row, allow to promote */
-    private void getPawnTiles(Chessboard chessboard, ChessPieceColors alliedColor, Point homeCoords, Map<SpecTileFunc, List<Tile>> importantTiles) {
+    private void getPawnTiles(Chessboard chessboard, ChessPieceColors alliedColor, Point homeCoords, Map<SpecTileFunc, List<Tile>> importantTiles)
+    {
         int direction = 0;
+        ChessPiece pawn = chessboard.getTile(homeCoords.x, homeCoords.y).getPiece();
 
         if (alliedColor == ChessPieceColors.WHITE)
         {
@@ -239,7 +241,7 @@ public interface CartesianMovement
         }
 
         // check normal tile
-        if(getSpecificTilesFrom(chessboard, alliedColor, homeCoords, importantTiles.get(SpecTileFunc.AVAILABLE_TILE), null, direction , 1,1, 0))
+        if (getSpecificTilesFrom(chessboard, alliedColor, homeCoords, importantTiles.get(SpecTileFunc.AVAILABLE_TILE), null, direction , 1,1, 0) && pawn.numbersOfMovesTaken == 0 )
         {
             getSpecificTilesFrom(chessboard, alliedColor, homeCoords, importantTiles.get(SpecTileFunc.AVAILABLE_TILE), null,direction ,1,  2, 0);
         }
@@ -324,7 +326,8 @@ public interface CartesianMovement
     }
 
     /** tiles close to home, closer */
-    private void orderTilesByDistanceFromPoint(Point homeCoords, List<Tile> tiles) {
+    private void orderTilesByDistanceFromPoint(Point homeCoords, List<Tile> tiles)
+    {
         tiles.sort((tile1, tile2) ->
         {
             double distance1 = Math.sqrt(Math.pow(tile1.getY() - homeCoords.x, 2) + Math.pow(tile1.getX() - homeCoords.y, 2));
@@ -334,5 +337,5 @@ public interface CartesianMovement
         });
 
     }
-    
+
 }

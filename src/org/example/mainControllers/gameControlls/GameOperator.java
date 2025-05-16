@@ -8,6 +8,7 @@ import org.example.objectsAndElements.pieces.pieceType.King;
 import org.example.objectsAndElements.pieces.pieceType.Pawn;
 import org.example.mainControllers.mainScreen.MainOperator;
 import org.example.mainControllers.mainScreen.MainWindowFrame;
+import org.example.objectsAndElements.pieces.pieceType.Rook;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,8 @@ import java.util.Map;
 public class GameOperator implements Runnable {
     private static GameOperator gameOperatorInstance = null;
     private GameScreenFactory gameScreenFactory;
-    private GameInstance gameInstance;
+    private final GameInstance gameInstance;
     private final MainWindowFrame mainWindowFrame;
-    private final MainOperator mainOperator;
     private ChessPiece selectedPiece = null;
     private Chessboard chessboard = null;
     private Map<SpecTileFunc, List<Tile>> importantTiles = null;
@@ -27,8 +27,7 @@ public class GameOperator implements Runnable {
     public GameOperator(MainOperator caller, Player player1, Player player2)
     {
         gameOperatorInstance = this;
-        mainOperator = caller;
-        this.mainWindowFrame = mainOperator.getMainWindowFrame();
+        this.mainWindowFrame = caller.getMainWindowFrame();
         gameInstance = new GameInstance(player1, player2, GameScreenFactory.getTileSize());
     }
 
@@ -83,7 +82,6 @@ public class GameOperator implements Runnable {
                 // if there's a piece in hand
                 if (importantTiles != null)
                 {
-
                     switch (checkSpecTileFunc(tile))
                     {
                         case AVAILABLE_TILE -> {
@@ -144,9 +142,10 @@ public class GameOperator implements Runnable {
         selectedPiece.lookAround();
         updateObserversOfATile(tile);
 
+        selectedPiece.incrementNumberOfMovesTaken();
         selectedPiece = null;
-        gameScreenFactory.resetToDefaultCursor();
 
+        gameScreenFactory.resetToDefaultCursor();
         gameScreenFactory.resetColors();
     }
 
@@ -154,22 +153,58 @@ public class GameOperator implements Runnable {
     {
         if (selectedPiece.getClass()== King.class)
         {
-            // get amount of moves made by King.
-            // if == 0.
-            // check if rook has 0
-            // 3 variants of castling.
-            // 2 tiles "up"
-            // 2 tiles "left"
-            // 2 tiles "right"
+            // if we do castling
+            Rook rook = tile.getRookForCastling();
+            // Determine the direction of the tile relative to the king tile
+            Tile kingTile = selectedPiece.getHomeTile();
+            int dx = tile.getX() - kingTile.getX();
+            int dy = tile.getY() - kingTile.getY();
 
-        }
-        else if (selectedPiece.getClass() == Pawn.class)
-        {
-            // if row is the "last" row
-            // promote
-            // en passant is attack tile
+            if (dx == 0 && dy < 0)
+            {
+                takeRookFromHomeTileAndMoveItThere(rook, chessboard.getTile(kingTile.getX(), kingTile.getY() - 1));
+                System.out.println("Tile is on the left of the king.");
+            }
+            else if (dx == 0 && dy > 0)
+            {
+                takeRookFromHomeTileAndMoveItThere(rook, chessboard.getTile(kingTile.getX(), kingTile.getY() + 1));
+                System.out.println("Tile is on the right of the king.");
+            }
+            else if (dy == 0 && dx < 0)
+            {
+                takeRookFromHomeTileAndMoveItThere(rook, chessboard.getTile(kingTile.getX() - 1, kingTile.getY()));
+                System.out.println("Tile is below the king.");
+            }
+            else if (dy == 0 && dx > 0)
+            {
+                takeRookFromHomeTileAndMoveItThere(rook, chessboard.getTile(kingTile.getX() + 1, kingTile.getY()));
+                System.out.println("Tile is above the king.");
+            }
 
+            // king is still in hand
+            moveToTile(tile);
         }
+    }
+
+    private void takeRookFromHomeTileAndMoveItThere(Rook rook, Tile targetTile)
+    {
+        Tile homeTile = rook.getHomeTile();
+
+        // pick it
+        homeTile.setPiece(null);
+        homeTile.refreshChessPieceIcon();
+
+        rook.stopObservingImportantTiles();
+        updateObserversOfATile(homeTile);
+
+        // drop it
+        targetTile.setPiece(rook);
+        targetTile.refreshChessPieceIcon();
+
+        rook.lookAround();
+        updateObserversOfATile(targetTile);
+
+        rook.incrementNumberOfMovesTaken();
     }
 
     private void captureTile(Tile tile)
@@ -230,7 +265,6 @@ public class GameOperator implements Runnable {
         }
         return null; // Return null if no match is found
     }
-
 
     public void showEndGameMessage(String message)
     {

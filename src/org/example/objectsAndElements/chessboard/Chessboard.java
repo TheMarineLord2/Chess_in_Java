@@ -76,24 +76,25 @@ public class Chessboard {
     }
 
     private void setUpChessPieces() {
-        setQueens();
+        //setQueens();
         setPawns();
         setRooks();
-        setBishops();
-        setKnights();
+        //setBishops();
+        //setKnights();
         setKings();
     }
 
     private void piecesLookAround() {
         for (ChessPiece piece : amountOfMaterial) {
-            if (piece.getClass() != King.class) {
-                piece.lookAround();
-                //System.out.println("Looked around " + piece.getClass().getSimpleName() + " " + piece.getColor());
-                piece.updateTileObservers();
-            }
+            piece.lookAround();
+            //System.out.println("Looked around " + piece.getClass().getSimpleName() + " " + piece.getColor());
+            piece.updateTileObservers();
         }
     }
 
+    public void uncheckOlderEnPassaints(ChessPiece chessPiece) {
+
+    }
     // set Up Pieces By Type
     private void setPawns() {
         for (int i = 0; i < 8; i++) {
@@ -237,5 +238,63 @@ public class Chessboard {
             }
         }
         return tiles;
+    }
+    
+    private void removeEnPassantMarker(Tile tile)
+    {
+        tile.setReferenceEnPassant(null);
+        for(ChessPiece piece : tile.getListOfObservers())
+        {
+            if(piece.getClass() == Pawn.class)
+            {
+                piece.lookAround();
+            }
+        }
+    }
+
+    public void clearEnPassantMarkersFor(ChessPieceColors alliedColor){
+        switch(alliedColor){
+            case BLACK:
+                // if black recently moved
+                for(int i = 0; i<8; i++)
+                {
+                    // clear row of next to white
+                    removeEnPassantMarker(playingField[i][5]);
+                }
+            case WHITE:
+                // if white recently moved
+                for(int i = 0; i<8; i++)
+                {
+                    // clear row of next to black
+                    removeEnPassantMarker(playingField[i][2]);
+                }
+        }
+    }
+
+    public void checkPromotionFor(ChessPieceColors currentlyPlaying)
+    {
+        switch(currentlyPlaying){
+            case BLACK:
+                for(int i = 0; i<8; i++)
+                {
+                    promoteIfPawn(playingField[i][7]);
+                }
+            case WHITE:
+                // if white recently moved
+                for(int i = 0; i<8; i++)
+                {
+                    promoteIfPawn(playingField[i][0]);
+                }
+        }
+    }
+
+    private void promoteIfPawn(Tile tile) {
+        if(tile.getPiece() != null && tile.getPiece().getClass() == Pawn.class)
+        {
+            ChessPieceColors color = tile.getPiece().getColor();
+            tile.getPiece().removeFromMaterial();
+            tile.setPiece(new Queen(color, this));
+            amountOfMaterial.add(tile.getPiece());
+        }
     }
 }

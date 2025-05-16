@@ -65,11 +65,15 @@ public class GameInstance{
 
     public void takeATurn()
     {
+        chessboard.clearEnPassantMarkersFor(currentlyPlaying);
+        chessboard.checkPromotionFor(currentlyPlaying);
+        // --- beginning of a new turn
         passControlsToAnotherPlayer();
         if(isGameOver())
         {
                gameOperator.showEndGameMessage("Checkmate!");
         }
+        // wait for further instructions
     }
 
     private void passControlsToAnotherPlayer()
